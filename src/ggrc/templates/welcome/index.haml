@@ -40,3 +40,9 @@
           %br
           %br
           %a.about-link{:href => "http://goto.google.com/ggrc", :target => "_blank"} About gGRC
+    %section.footer{:style => 'background-color: white; border: 0;'}
+      .row-fluid
+        .span12
+          %p{:style => 'color: #999; font-size: 11px;'}
+            Version
+            =config.get('VERSION')
