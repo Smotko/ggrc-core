@@ -52,7 +52,7 @@ clean_appengine_sdk :
 
 $(APPENGINE_ZIP_PATH) :
 	mkdir -p `dirname $(APPENGINE_ZIP_PATH)`
-	wget "$(APPENGINE_ZIP_HREF)" -O "$(APPENGINE_ZIP_PATH).tmp"
+	wget -q "$(APPENGINE_ZIP_HREF)" -O "$(APPENGINE_ZIP_PATH).tmp"
 	mv "$(APPENGINE_ZIP_PATH).tmp" "$(APPENGINE_ZIP_PATH)"
 
 clean_appengine_packages :
