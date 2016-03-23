@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Copyright (C) 2016 Google Inc., authors, and contributors <see AUTHORS file>
+# Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+# Created By: miha@reciprocitylabs.com
+# Maintained By: miha@reciprocitylabs.com
+
+set -o nounset
+set -o errexit
+
+PROJECT="deploy"
+SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
+source bin/jenkins/functions.sh
+
+PROJECT=$( project_name "$@" -d "$PROJECT" )
+
+setup $PROJECT
+
+deploy $PROJECT && rc=$? || rc=$?
+
+teardown $PROJECT
+
+exit $rc

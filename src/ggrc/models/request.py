@@ -16,7 +16,6 @@ from ggrc.models.mixins import Base
 from ggrc.models.mixins import CustomAttributable
 from ggrc.models.mixins import deferred
 from ggrc.models.mixins import Described
-from ggrc.models.mixins import Revisionable
 from ggrc.models.mixins import Slugged
 from ggrc.models.mixins import Titled
 from ggrc.models.object_document import Documentable
@@ -28,8 +27,7 @@ from ggrc.services.common import Resource
 
 
 class Request(Assignable, Documentable, Personable, CustomAttributable,
-              Relatable, Titled, Slugged, Described, Revisionable,
-              Base, db.Model):
+              Relatable, Titled, Slugged, Described, Base, db.Model):
   __tablename__ = 'requests'
   _title_uniqueness = False
 

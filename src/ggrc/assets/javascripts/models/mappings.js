@@ -733,7 +733,6 @@
       urls_from_comments: Cross("comments", "urls"),
       all_documents: Multi(["documents", "documents_from_comments"]),
       all_urls: Multi(["urls", "urls_from_comments"]),
-      revision_history: Direct('Revision', 'resource', 'revisions'),
       related_objects_via_search: Search(function (binding) {
         var types = [
           "Program", "Regulation", "Contract", "Policy", "Standard",
