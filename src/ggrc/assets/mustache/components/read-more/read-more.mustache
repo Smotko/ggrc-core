@@ -1,0 +1,23 @@
+{{!
+    Copyright (C) 2016 Google Inc.
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+{{#if text}}
+      {{#if overflowing}}
+        <div class="read-more__body">
+          {{#if expanded}}
+            {{{text}}}
+          {{else}}
+            {{resultedText}}
+          {{/if}}
+        </div>
+          <div class="read-more__controls">
+              <a can-click="toggle" class="read-more__btn">{{btnText}}</a>
+          </div>
+      {{else}}
+        {{{text}}}
+      {{/if}}
+
+{{else}}
+    <span class="empty-message">None</span>
+{{/if}}

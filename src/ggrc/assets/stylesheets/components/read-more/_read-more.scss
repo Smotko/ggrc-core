@@ -1,16 +1,17 @@
 /* Read-More Component CSS spec */
 
-assessment-read-more {
+read-more {
+  transition: height 0.1s ease;
   position: relative;
   display: block;
 
-  .assessment-read-more__body {
+  .read-more__body {
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: display 0.1s ease, height 0.1s ease, max-height 0.3s ease;
     padding: 0;
     box-sizing: border-box;
 
-    .assessment-read-more__body-content {
+    .read-more__body-content {
       line-height: 18px;
       position: relative;
 
@@ -21,7 +22,7 @@ assessment-read-more {
     }
   }
 
-  .assessment-read-more__controls {
+  .read-more__controls {
     padding: 0;
     height: 24px;
     margin: 0;
@@ -29,7 +30,7 @@ assessment-read-more {
     position: relative;
   }
 
-  .assessment-read-more__btn {
+  .read-more__btn {
     cursor: pointer;
     line-height: 24px;
     transition: display 0.3s ease;
@@ -40,3 +41,11 @@ assessment-read-more {
   }
 }
 
+read-more-text-overflow {
+  box-sizing: border-box;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 18px;
+  font-size: 13px;
+}
