@@ -1,0 +1,105 @@
+/*
+ * Copyright (C) 2016 Google Inc.
+ * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+
+collapsible-panel {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin: 0 0 12px;
+  position: relative;
+
+  &.details-item {
+    margin: 0;
+
+    collapsible-panel-body {
+      border-top: 1px solid #ccc;
+
+      &[expanded] {
+        border-top: 1px solid transparent;
+      }
+    }
+
+    collapsible-panel-header {
+      height: 42px;
+      line-height: 42px;
+      //border-bottom: 1px solid #ccc;
+
+      .title-text {
+        text-transform: capitalize;
+        font-size: 13px;
+        font-weight: normal;
+      }
+
+      .fa {
+        height: 42px;
+        line-height: 42px;
+      }
+    }
+  }
+}
+
+collapsible-panel-header {
+  line-height: 24px;
+  height: 24px;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  &:after {
+    overflow: hidden;
+  }
+
+  .title-text {
+    text-align: left;
+    margin: 0 8px 0 4px;
+    max-width: 70%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 11px;
+    display: inline-block;
+  }
+
+  .fa {
+    color: $darkGray;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    width: 24px;
+    cursor: pointer;
+
+    &.title-icon {
+      font-size: 13px;
+      color: $darkText;
+      width: 28px;
+      cursor: default;
+
+      &:hover {
+        color: $darkText;
+      }
+    }
+
+    &:hover {
+      color: $darkText;
+    }
+  }
+}
+
+collapsible-panel-body {
+   > .body-inner {
+     padding: 4px 8px 4px 24px;
+     display: none;
+  }
+
+  &[expanded] {
+    > .body-inner {
+      display: block;
+      transition: display 0.3s ease;
+    }
+  }
+}
+
