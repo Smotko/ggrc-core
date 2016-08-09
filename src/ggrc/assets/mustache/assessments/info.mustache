@@ -13,7 +13,12 @@
           {{> '/static/mustache/assessments/header.mustache' }}
             <div class="assessment-info-pane">
                 <div class="assessment-attributes">
-                  {{> '/static/mustache/assessments/description.mustache' }}
+                    <div class="assessment-description">
+                        <h6>Description</h6>
+                        <div data-test-id="title_description_content_7a906d2e">
+                          <read-more text="description"></read-more>
+                        </div>
+                    </div>
                     <assessment-mapped-objects parent-instance="instance"
                                                title-text="Controls"
                                                mapping-type="Control"
@@ -33,14 +38,27 @@
                                                title-text="Related Information"
                                                mapping-type=""
                                                filter=""
+                                               item-tpl="one"
                                                mapping="instance.class.info_pane_options.mapped_objects.mapping">
                     </assessment-mapped-objects>
                 </div>
                 <div class="assessment-summary">
-                  {{> '/static/mustache/assessments/test_plan.mustache' }}
-                    <people-list instance="instance" editable="true"></people-list>
-                  {{> '/static/mustache/assessments/urls.mustache'}}
-                  {{> '/static/mustache/assessments/dates_list.mustache'}}
+                    <h6>Details</h6>
+                    <collapsible-panel title-text="Test Plan" collapsed="true" title-icon="fa-list-ol" class="details-item">
+                        <read-more text="test_plan"></read-more>
+                    </collapsible-panel>
+                    <collapsible-panel title-text="People" collapsed="true" title-icon="fa-users" class="details-item">
+                      <people-list instance="instance" editable="true"></people-list>
+                    </collapsible-panel>
+                    <collapsible-panel title-text="Dates" collapsed="true" title-icon="fa-calendar" class="details-item">
+                      {{> '/static/mustache/assessments/dates_list.mustache'}}
+                    </collapsible-panel>
+                    <collapsible-panel title-text="Notes" collapsed="true" title-icon="fa-sticky-note-o" class="details-item">
+                        <read-more text="notes"></read-more>
+                    </collapsible-panel>
+                    <collapsible-panel title-text="URL" collapsed="true" title-icon="fa-link" class="details-item">
+                      {{> '/static/mustache/assessments/urls.mustache'}}
+                    </collapsible-panel>
                 </div>
             </div>
             <div class="tabs-wrap">

@@ -110,9 +110,11 @@ dashboard-js-files:
   - apps/business_objects.js
   - apps/custom_attributes.js
   - components/spinner/spinner.js
-  - components/assessment/read-more.js
+  - components/collapsible-panel/collapsible-panel.js
+  - components/collapsible-panel/collapsible-panel-header.js
+  - components/collapsible-panel/collapsible-panel-body.js
+  - components/read-more/read-more.js
   - components/assessment/mapped-objects/mapped-objects.js
-  - components/assessment/mapped-objects/mapped-objects-title.js
   - components/assessment/mapped-objects/mapped-objects-list.js
   - components/assessment/mapped-objects/mapped-objects-popover.js
   - components/assessment/mapped-objects/mapped-objects-filter.js
@@ -170,10 +172,13 @@ app-init-files:
   - dashboard.js
 
 dashboard-js-template-files:
-  - components/assessment/read-more.mustache
+  - components/read-more/read-more.mustache
+  - components/collapsible-panel/collapsible-panel.mustache
+  - components/collapsible-panel/collapsible-panel-body.mustache
+  - components/collapsible-panel/collapsible-panel-header.mustache
   - components/assessment/mapped-objects/mapped-objects.mustache
-  - components/assessment/mapped-objects/mapped-objects-title.mustache
-  - components/assessment/mapped-objects/mapped-objects-item.mustache
+  - components/assessment/mapped-objects/mapped-objects-item-one-row.mustache
+  - components/assessment/mapped-objects/mapped-objects-item-two-row.mustache
   - components/assessment/mapped-objects/mapped-objects-list.mustache
   - components/assessment/mapped-objects/mapped-objects-popover.mustache
   - components/assessment/urls-list.mustache
@@ -283,9 +288,6 @@ dashboard-js-template-files:
   - assessments/header.mustache
   - assessments/urls.mustache
   - assessments/dates_list.mustache
-  - assessments/test_plan.mustache
-  - assessments/description.mustache
-  - assessments/notes.mustache
   - assessments/generator_title.mustache
   - assessment_templates/attribute_field.mustache
   - assessment_templates/attribute_add_field.mustache
