@@ -5,103 +5,69 @@ assessment-mapped-objects {
   position: relative;
   display: block;
 
-  assessment-mapped-objects-title {
-    line-height: 24px;
-    height: 24px;
+  assessment-mapped-objects-list {
     display: flex;
-    margin: 0 4px;
-    padding: 0 4px;
-    box-sizing: border-box;
+    flex-direction: column;
+    position: relative;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px 0;
 
-    &:after {
-      overflow: hidden;
-    }
-
-    .title-text {
-      text-align: left;
+    .assessment-mapped-objects__item {
+      background: $white;
       line-height: 24px;
-      margin: 0 8px 0 4px;
-      max-width: 400px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      display: inline-block;
-    }
-
-    .fa {
-      color: $darkGray;
-      height: 24px;
-      line-height: 24px;
-      text-align: center;
-      width: 24px;
+      box-sizing: border-box;
+      padding: 0 8px 0 4px;
+      margin: 0;
+      font-size: 12px;
+      color: $text;
       cursor: pointer;
 
-      &:hover {
-        color: $darkText;
+      .title {
+        font-weight: bold;
+        color: $middleText;
+        padding: 0 16px 0 0;
       }
 
-      &:first-child {
-        font-size: 12px;
-      }
-    }
-  }
-
-  assessment-mapped-objects-list {
-    .assessment-mapped-objects__list {
-      position: relative;
-      list-style: none;
-      padding: 0;
-      margin: 0 0 16px 0;
-      display: none;
-
-      &[expanded] {
-        display: block;
-      }
-
-      .assessment-mapped-objects__item {
-        background: $white;
-        line-height: 24px;
+      .description {
+        width: 100%;
+        padding: 0 16px 0 28px;
+        word-break: normal;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         box-sizing: border-box;
-        padding: 0 8px 0 24px;
-        margin: 0;
-        font-size: 12px;
-        color: #666;
-        cursor: pointer;
-        text-shadow: 1px 1px $white;
+        overflow: hidden;
+      }
 
-        &:hover {
-          position: relative;
-          border-radius: 2px;
-          box-shadow: 1px 1px 2px 0 $border-color;
-          font-weight: bold;
-          transition: background 0.2s ease;
-          background: rgba(0, 0, 0, 0.02);
-        }
+      &:hover {
+        position: relative;
+        border-radius: 2px;
+        box-shadow: 1px 1px 2px 0 $border-color;
+        transition: background 0.2s ease;
+        background: rgba(0, 0, 0, 0.02);
+      }
 
-        &.active {
-          position: relative;
-          border-radius: 2px;
-          box-shadow: none;
-          font-weight: bold;
-          transition: background 0.2s ease;
-          background: $lightGray;
-        }
+      &.active {
+        position: relative;
+        border-radius: 2px;
+        box-shadow: none;
+        transition: background 0.2s ease;
+        background: $lightGray;
+      }
 
-        .assessment-mapped-objects__item-body {
+      .assessment-mapped-objects__item-body {
 
-          .fa {
-            font-size: 14px;
-            line-height: 24px;
-            min-width: 18px;
-            padding: 0 4px;
-            text-align: center;
-          }
+        .fa {
+          font-size: 14px;
+          line-height: 24px;
+          color: $text;
+          width: 18px;
+          margin: 0 4px 0 2px;
+          text-align: center;
+          box-sizing: border-box;
         }
       }
     }
   }
-
 }
 

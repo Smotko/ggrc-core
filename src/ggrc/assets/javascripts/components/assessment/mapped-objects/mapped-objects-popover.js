@@ -20,7 +20,7 @@
       selectedEl: null,
       setPopoverStyle: function (el) {
         var pos = el[0].getBoundingClientRect();
-        var top = Math.floor(el.position().top + 25);
+        var top = Math.floor(el.position().top);
         var left = Math.floor(pos.width / 2);
         var width = Math
           .floor(window.innerWidth - (pos.right - pos.width / 2) - 54);

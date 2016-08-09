@@ -24,6 +24,7 @@
       expanded: true,
       parentInstance: null,
       mappedObjects: [],
+      itemTpl: '@',
       setMappedObjects: function (items) {
         this.attr('mappedObjects', items);
       },

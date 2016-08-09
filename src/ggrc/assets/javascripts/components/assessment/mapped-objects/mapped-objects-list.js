@@ -19,9 +19,9 @@
     template: tpl,
     scope: {
       content: '<content></content>',
-      titleText: '@',
       selectedItem: null,
       selectedEl: null,
+      itemTpl: null,
       items: [],
       addSelection: function (ctx, el) {
         this.removeSelection();
@@ -36,6 +36,9 @@
           obj.instance.attr('isSelected', false);
         });
       }
+    },
+    init: function () {
+      this.scope.attr('isOneItemTpl', this.scope.attr('itemTpl') === 'one');
     },
     events: {
       '{window} click': function (el, ev) {

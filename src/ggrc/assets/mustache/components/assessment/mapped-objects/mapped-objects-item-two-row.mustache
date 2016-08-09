@@ -2,12 +2,18 @@
     Copyright (C) 2016 Google Inc.
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
-<li class="assessment-mapped-objects__item {{#if instance.isSelected}}active{{/if}}" data-object-id="{{instance.id}}" can-click="addSelection"
-    data-object-type="{{instance.class.table_singular}}">
+<div class="assessment-mapped-objects__item {{#if instance.isSelected}}active{{/if}}" data-object-id="{{instance.id}}" can-click="addSelection">
     <div class="assessment-mapped-objects__item-body" >
         <div class="title">
             <i class="fa fa-{{instance.class.table_singular}}"></i>
           {{{firstnonempty instance.title instance.description_inline instance.name instance.email ''}}}
         </div>
+        <div class="description">
+            {{#if instance.description}}
+                {{instance.description}}
+            {{else}}
+                <span class="empty-message">None</span>
+            {{/if}}
+        </div>
     </div>
-</li>
+</div>
