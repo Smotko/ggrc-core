@@ -18,8 +18,13 @@ $border-color: #eee;
   flex-wrap: wrap;
 
   .assessment-attributes {
-    flex: 2;
+    flex:2 2 66%;
     margin: 0 22px 28px 0;
+    max-width: 66%;
+  }
+
+  .assessment-description {
+    margin: 0 0 16px;
   }
 
   .assessment-control-item {
@@ -306,12 +311,8 @@ $border-color: #eee;
     }
 
     h6 {
-      margin: 24px 0 0;
-      padding: 0 0 8px;
-    }
-
-    > h6:first-child {
       margin: 0;
+      padding: 0 0 8px;
     }
   }
 }
