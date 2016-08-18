@@ -30,6 +30,10 @@
         this.attr('expanded', newValue);
         this.attr('btnText', newValue ? readLess : readMore);
       },
+      getSlicedText: function (text, limit) {
+        limit -= 3;
+        return text.slice(0, limit) + '...';
+      },
       setValues: function (originalText) {
         var limit = this.attr('maxTextLength') || defaultTextLength;
         var resultedText =
@@ -38,7 +42,7 @@
         this.attr('maxTextLength', limit);
         this.attr('overflowing', isOverflowing);
         this.attr('resultedText', isOverflowing ?
-        resultedText.slice(0, limit) + '...' :
+          this.getSlicedText(resultedText, limit) :
           originalText);
       }
     },
