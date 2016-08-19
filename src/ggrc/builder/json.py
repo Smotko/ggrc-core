@@ -444,6 +444,8 @@ class LazyStubRepresentation(object):
 
   def __init__(self, type_, conditions):
     self.type = type_
+    if isinstance(conditions, (unicode)):
+      conditions = long(conditions)
     if isinstance(conditions, (int, long)):
       conditions = {'id': conditions}
     self.conditions = conditions
