@@ -20,6 +20,6 @@
     "fontawesome": "~4.4.0",
     "string-natural-compare": "1.1.1",
     "quill": "~0.20.1",
-    "zeroclipboard": "~2.2.0"
+    "clipboard": "~1.5.12"
   }
 }

@@ -25,9 +25,9 @@
       },
       "inserted": function (el, evnt) {
         var timeout = this.scope.attr("timeout") || 10000;
-        this._clip = new Clipboard(el.find("a"));
+        this._clip = new Clipboard(el.find("a")[0]);
 
-        this._clip.on("aftercopy", function () {
+        this._clip.on("success", function () {
           if (this.scope.attr("notify")) {
             $("body").trigger("ajax:flash", {"success": this.scope.attr("notifyText")});
           }
@@ -40,4 +40,4 @@
     }
   });
 
-})(window.can, window.can.$, window.ZeroClipboard);
+})(window.can, window.can.$, window.Clipboard);

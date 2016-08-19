@@ -189,7 +189,6 @@ bower_components : bower.json
 	mkdir -p $(DEV_BOWER_PATH)
 	ln -sf $(DEV_BOWER_PATH) $(BOWER_PATH)
 	$(BOWER_BIN_PATH) install --allow-root
-	cp $(BOWER_PATH)/zeroclipboard/dist/ZeroClipboard.swf $(FLASH_PATH)/ZeroClipboard.swf
 	cp -r $(NODE_MODULES_PATH)/font-awesome/fonts $(STATIC_PATH)
 
 clean_bower_components :

@@ -22,7 +22,7 @@
     "RefreshQueueManager": false,
     "Spinner": false,
     "Stickyfill": false,
-    "ZeroClipboard": false,
+    "Clipboard": false,
     // TODO: Check why these vars are global
     "process_gapi_query": false,
     "calculate_spinner_z_index": false,
