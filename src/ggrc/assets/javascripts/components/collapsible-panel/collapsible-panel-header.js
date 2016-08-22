@@ -18,8 +18,13 @@
     scope: {
       titleIcon: null,
       expanded: null,
-      toggle: function () {
-        this.attr('expanded', !this.attr('expanded'));
+    },
+    events: {
+      ' click': function (el, ev) {
+        if ($(ev.target).data('toggle')) {
+          return;
+        }
+        this.scope.attr('expanded', !this.scope.attr('expanded'));
       }
     }
   });

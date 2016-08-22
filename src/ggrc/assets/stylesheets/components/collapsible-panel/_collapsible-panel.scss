@@ -47,6 +47,7 @@ collapsible-panel-header {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  cursor: pointer;
 
   &:after {
     overflow: hidden;
@@ -70,7 +71,6 @@ collapsible-panel-header {
     line-height: 24px;
     text-align: center;
     width: 32px;
-    cursor: pointer;
 
     &.title-icon {
       font-size: 13px;
@@ -102,4 +102,3 @@ collapsible-panel-body {
     }
   }
 }
-
