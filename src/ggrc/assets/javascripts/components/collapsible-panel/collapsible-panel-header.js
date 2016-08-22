@@ -16,7 +16,6 @@
     tag: tag,
     template: tpl,
     scope: {
-      content: '<content></content>',
       titleIcon: null,
       expanded: null,
       toggle: function () {

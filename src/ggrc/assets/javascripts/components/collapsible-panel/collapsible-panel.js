@@ -18,7 +18,6 @@
     scope: {
       titleText: '@',
       titleIcon: '@',
-      content: '<content></content>',
       expanded: true,
       collapsed: '@'
     },

@@ -54,7 +54,7 @@ collapsible-panel-header {
 
   .title-text {
     text-align: left;
-    margin: 0 8px 0 4px;
+    margin: 0 8px 0 0;
     max-width: 70%;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -69,13 +69,13 @@ collapsible-panel-header {
     height: 24px;
     line-height: 24px;
     text-align: center;
-    width: 24px;
+    width: 32px;
     cursor: pointer;
 
     &.title-icon {
       font-size: 13px;
       color: $darkText;
-      width: 28px;
+      width: 32px;
       cursor: default;
 
       &:hover {

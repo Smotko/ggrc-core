@@ -16,15 +16,7 @@
     tag: tag,
     template: tpl,
     scope: {
-      content: '<content></content>',
-      expanded: null,
-      isVisible: false
-    },
-    events: {
-      '{scope} expanded': function (scope, ev, val) {
-        console.info('Was triggered!!!');
-        this.scope.attr('isVisible', val);
-      }
+      expanded: null
     }
   });
 })(window.can, window.GGRC);

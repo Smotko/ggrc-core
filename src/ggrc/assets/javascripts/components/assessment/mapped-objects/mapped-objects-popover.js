@@ -28,7 +28,7 @@
         var leftStyle = 'left: ' + left + 'px;';
         var widthStyle = 'width: ' + width + 'px;';
         var opacityStyle = 'opacity: 1;';
-        return topStyle + leftStyle + ' max-height: 400px;' +
+        return topStyle + leftStyle + ' max-height: 450px;' +
           widthStyle + opacityStyle +
           'transition: opacity 0.2s ease,' +
           ' width 0.4s ease, max-height 0.3s ease;';
