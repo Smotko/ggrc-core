@@ -3,6 +3,7 @@
 
 from copy import deepcopy
 from datetime import date
+from flask import current_app
 from sqlalchemy import and_
 from urlparse import urljoin
 
@@ -28,6 +29,8 @@ exposed functions
 def get_cycle_created_task_data(notification):
   cycle_task = get_object(CycleTaskGroupObjectTask, notification.object_id)
   if not cycle_task:
+    current_app.logger.warning(
+        '{} for notification {} not found.'.format(notif.object_type, notif.id))
     return {}
 
   cycle_task_group = cycle_task.cycle_task_group
@@ -93,6 +96,8 @@ def get_cycle_created_task_data(notification):
 def get_cycle_task_due(notification):
   cycle_task = get_object(CycleTaskGroupObjectTask, notification.object_id)
   if not cycle_task:
+    current_app.logger.warning(
+        '{} for notification {} not found.'.format(notif.object_type, notif.id))
     return {}
 
   notif_name = notification.notification_type.name
@@ -169,6 +174,8 @@ def get_cycle_data(notification):
 def get_cycle_task_declined_data(notification):
   cycle_task = get_object(CycleTaskGroupObjectTask, notification.object_id)
   if not cycle_task:
+    current_app.logger.warning(
+        '{} for notification {} not found.'.format(notif.object_type, notif.id))
     return {}
 
   force = cycle_task.cycle_task_group.cycle.workflow.notify_on_change
