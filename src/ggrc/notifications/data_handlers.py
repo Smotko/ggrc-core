@@ -9,6 +9,7 @@ Main contributed functions are:
 
 import datetime
 import urlparse
+from flask import current_app
 
 from ggrc import models
 from ggrc import utils
@@ -70,6 +71,10 @@ def assignable_open_data(notif):
     A dict containing all notification data for the given notification.
   """
   obj = get_notification_object(notif)
+  if not obj:
+    current_app.logger.warning(
+        '{} for notification {} not found.'.format(notif.object_type, notif.id))
+    return {}
   people = [person for person, _ in obj.assignees]
 
   return _get_assignable_dict(people, notif)
@@ -233,12 +238,17 @@ def get_comment_data(notif):
   data = {}
   recipients = set()
   comment = get_notification_object(notif)
+  comment_obj = None
   rel = (models.Relationship.find_related(comment, models.Request()) or
          models.Relationship.find_related(comment, models.Assessment()))
 
   if rel:
     comment_obj = (rel.Request_destination or rel.Request_source or
                    rel.Assessment_destination or rel.Assessment_source)
+  if not comment_obj:
+    current_app.logger.warning(
+        'Comment object not found for notification {}'.format(notif.id))
+    return {}
 
   if comment_obj.recipients:
     recipients = set(comment_obj.recipients.split(","))

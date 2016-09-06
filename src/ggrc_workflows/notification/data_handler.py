@@ -99,6 +99,10 @@ def get_cycle_task_due(notification):
     current_app.logger.warning(
         '{} for notification {} not found.'.format(notif.object_type, notif.id))
     return {}
+  if not cycle_task.contact:
+    current_app.logger.warning(
+        'Contact for cycle task {} not found.'.format(notification.object_id))
+    return {}
 
   notif_name = notification.notification_type.name
   due = "due_today" if notif_name == "cycle_task_due_today" else "due_in"
@@ -174,6 +178,10 @@ def get_cycle_data(notification):
 def get_cycle_task_declined_data(notification):
   cycle_task = get_object(CycleTaskGroupObjectTask, notification.object_id)
   if not cycle_task:
+    current_app.logger.warning(
+        '{} for notification {} not found.'.format(notif.object_type, notif.id))
+    return {}
+  if not cycle_task.contact:
     current_app.logger.warning(
         '{} for notification {} not found.'.format(notif.object_type, notif.id))
     return {}
