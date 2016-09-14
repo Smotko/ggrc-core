@@ -66,7 +66,6 @@ CMS.Controllers.Filterable("CMS.Controllers.DashboardWidgets", {
   , draw_widget : function(frag, prefs) {
 
     this.element.html(frag[0]);
-    this.element.trigger("widgets_updated", this.element);
 
     var content = this.element
       , controller_content = null;
