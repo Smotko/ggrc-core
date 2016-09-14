@@ -24,7 +24,7 @@
                                                mapping-type="Control"
                                                filter="control"
                                                items-tpl="title-and-description"
-                                               mapping="instance.class.info_pane_options.mapped_objects.mapping">
+                                               mapping="info_related_objects">
                     </assessment-mapped-objects>
                     <div class="assessment-controls">
                         <span class="assessment-controls__note">Input assessment information below:</span>
@@ -36,14 +36,14 @@
                             <assessment-attachments-list class="attachment-list"></assessment-attachments-list>
                             <assessment-urls-list></assessment-urls-list>
                         </div>
-                      {{> '/static/mustache/mixins/stateful.mustache' }}
+                     <assessment-controls-toolbar class="assessment-controls-toolbar" instance="instance"></assessment-controls-toolbar>
                     </div>
                     <assessment-mapped-objects parent-instance="instance"
                                                title-text="Related Information"
                                                mapping-type=""
                                                filter=""
                                                items-tpl="title"
-                                               mapping="instance.class.info_pane_options.mapped_objects.mapping">
+                                               mapping="info_related_objects">
                     </assessment-mapped-objects>
                 </div>
                 <div class="assessment-summary">
@@ -82,7 +82,7 @@
                         <revision-log instance="instance"></revision-log>
                     </tab-panel>
                     <tab-panel panels="panels" title-text="Related Assessments" instance="instance">
-                      {{> '/static/mustache/assessments/reusable_objects.mustache' }}
+                      {{> '/static/mustache/assessments/related-assessments.mustache' }}
                     </tab-panel>
                     <tab-panel panels="panels" title-text="Related Requests" instance="instance">
                       {{> '/static/mustache/assessments/related_requests.mustache'}}

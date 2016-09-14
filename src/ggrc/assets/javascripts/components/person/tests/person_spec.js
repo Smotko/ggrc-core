@@ -152,6 +152,24 @@ describe('GGRC.Components.personItem', function () {
           .toBe(CMS.Models.Person.cache['123']);
       expect(RefreshQueue.prototype.trigger).not.toHaveBeenCalled();
     });
+    it('gets person object from context and it doesn\'t trigger ' +
+       'the RefreshQueue', function () {
+      var personObj = new CMS.Models.Person({
+        id: 123, name: 'Ivan', email: 'ivan@google.com', type: 'Person'
+      });
+
+      template = can.view
+        .mustache('<person-info person-obj="person"></person-info>');
+      frag = template({
+        person: personObj
+      });
+      frag = $(frag);
+      component = frag.find('person-info').control();
+
+      expect(component.scope.attr('personObj'))
+          .toBe(CMS.Models.Person.cache['123']);
+      expect(RefreshQueue.prototype.trigger).not.toHaveBeenCalled();
+    });
   });
 
   describe('unmap person click event handler', function () {

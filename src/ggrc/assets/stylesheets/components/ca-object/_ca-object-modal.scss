@@ -3,47 +3,8 @@
  * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
-.attachment-modal__overlay {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  background: rgba(255, 255, 255, 0.7);
-  top: 0;
-  left: 0;
-  z-index: -2;
-
-  &.attachment-modal__overlay-open {
-    opacity: 1;
-    z-index: 3299;
-    transition: opacity 0.2s ease;
-  }
-}
-
-.attachment-modal {
-  box-sizing: border-box;
-  width: auto;
-  max-width: 532px;
-  min-width: 400px;
-  position: fixed;
-  z-index: -1;
-  opacity: 0;
-  top: 0;
-  left: 0;
-  margin: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-
-  &.attachment-modal-open {
-    opacity: 1;
-    z-index: 3300;
-    border-radius: 6px;
-    transition: opacity 0.2s ease;
-  }
-
+.simple-modal {
   .attachment-modal__controls {
-
     ggrc-gdrive-picker-launcher {
       margin: 4px 0;
       display: inline-block;
@@ -63,7 +24,6 @@
   }
 
   .attachment-modal__field {
-
     .attachment-modal__field-title {
       max-width: 100%;
       text-overflow: ellipsis;
@@ -81,17 +41,7 @@
     }
   }
 
-  .attachment-modal__body {
-
-  }
-
   .modal-body {
-    box-sizing: border-box;
-    padding: 16px;
-    overflow: auto;
-    background: #fff;
-    margin: 0;
-
     textarea {
       max-width: 500px;
       max-height: 360px;
@@ -110,41 +60,6 @@
         outline: 0;
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
       }
-    }
-  }
-  .modal-header {
-    background: #fff;
-    border-radius: 2px 2px 0 0;
-    box-sizing: border-box;
-    min-height: 50px;
-    padding: 16px;
-    margin: 0;
-    border-bottom: 1px solid $border-color;
-
-    .modal-dismiss {
-      margin: 0;
-      padding: 0;
-      position: absolute;
-      right: 16px;
-      top: 16px;
-      cursor: pointer;
-      opacity: .3;
-
-      &:hover{
-        opacity: 1;
-      }
-    }
-  }
-  .modal-footer {
-    border-top: 1px solid $border-color;
-    box-sizing: border-box;
-    padding: 16px;
-    margin: 0;
-    background: #fff;
-    border-radius: 0 0 2px 2px;
-
-    .confirm-buttons{
-      cursor: pointer;
     }
   }
 }

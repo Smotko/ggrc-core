@@ -1,0 +1,33 @@
+/*
+ * Copyright (C) 2016 Google Inc.
+ * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+.flex-box {
+  display: flex;
+  box-sizing: border-box;
+  list-style: none;
+
+  .flex-row {
+    flex-direction: row;
+  }
+
+  .flex-col {
+    flex-direction: column;
+  }
+
+  .flex-size-1 {
+    flex: 1 1;
+  }
+
+  .flex-size-2 {
+    flex: 2 2;
+  }
+
+  .flex-size-3 {
+    flex: 3 3;
+  }
+
+  .flex-size-4 {
+    flex: 4 4;
+  }
+}

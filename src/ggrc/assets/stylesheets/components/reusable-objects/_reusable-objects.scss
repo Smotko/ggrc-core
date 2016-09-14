@@ -1,0 +1,26 @@
+/*
+ * Copyright (C) 2016 Google Inc.
+ * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+reusable-objects-item {
+  display: flex;
+  position: relative;
+  line-height: 24px;
+  padding-right: 38px;
+
+  > .date {
+    width: 72px;
+    margin: 0 8px 0 0;
+  }
+}
+reusable-objets-item-control {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  line-height: 24px;
+  height: 24px;
+  width: 38px;
+  text-align: center;
+  vertical-align: baseline;
+}

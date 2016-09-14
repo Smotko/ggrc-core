@@ -21,8 +21,8 @@
  */
 GGRC.RequestStore = function() {
   // From https://www.artandlogic.com/blog/2013/06/ajax-caching-transports-compatible-with-jquery-deferred/
-  var storage = (typeof(sessionStorage) == undefined) ?
-      (typeof(localStorage) == undefined) ? {
+  var storage = (typeof sessionStorage === 'undefined') ?
+      (typeof localStorage === 'undefined') ? {
           getItem: function(key){
               return this.store[key];
           },

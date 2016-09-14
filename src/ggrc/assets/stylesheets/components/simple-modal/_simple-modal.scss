@@ -1,0 +1,108 @@
+/*
+ * Copyright (C) 2016 Google Inc.
+ * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+
+.simple-modal__overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.6);
+  top: 0;
+  left: 0;
+  z-index: -2;
+
+  &.simple-modal__overlay-open {
+    opacity: 1;
+    z-index: 3299;
+    transition: opacity 0.2s ease;
+  }
+}
+
+.simple-modal {
+  box-sizing: border-box;
+  width: auto;
+  max-width: 700px;
+  min-width: 400px;
+  position: fixed;
+  z-index: -1;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  /* Specific Styles for Prior Responses Modal Window */
+  &.related-assessments {
+    max-width: 932px;
+
+    .modal-body {
+      overflow: hidden;
+      max-height: none;
+      height: 500px;
+    }
+    .grid-data-body {
+      font-size: 13px;
+      width: 900px;
+      max-height: 380px;
+      box-sizing: border-box;
+      overflow: auto;
+    }
+  }
+
+  &.simple-modal-open {
+    opacity: 1;
+    z-index: 3300;
+    border-radius: 6px;
+    transition: opacity 0.2s ease;
+  }
+
+  .modal-body {
+    box-sizing: border-box;
+    padding: 16px;
+    overflow: auto;
+    background: $white;
+    margin: 0;
+  }
+
+  .modal-header {
+    background: $white;
+    border-radius: 2px 2px 0 0;
+    box-sizing: border-box;
+    min-height: 50px;
+    padding: 16px;
+    position: relative;
+    margin: 0;
+    border-bottom: 1px solid $border-color;
+
+    .modal-dismiss {
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      cursor: pointer;
+      opacity: .3;
+
+      &:hover{
+        opacity: 1;
+      }
+    }
+  }
+
+  .modal-footer {
+    border-top: 1px solid $border-color;
+    box-sizing: border-box;
+    padding: 16px;
+    margin: 0;
+    background: $white;
+    border-radius: 0 0 2px 2px;
+
+    .confirm-buttons{
+      cursor: pointer;
+    }
+  }
+}
+

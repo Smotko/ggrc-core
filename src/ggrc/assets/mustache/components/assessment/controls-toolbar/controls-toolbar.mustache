@@ -1,0 +1,9 @@
+{{!
+    Copyright (C) 2016 Google Inc.
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+<button class="btn btn-small btn-draft btn-extra-gray" can-click="showRelatedResponses" title="Show Related Responses">Prior Responses</button>
+ {{> '/static/mustache/mixins/stateful.mustache' }}
+<simple-modal instance="instance" state="modal" extra-css-cls="related-assessments">
+    {{> '/static/mustache/assessments/related-assessments.mustache' }}
+</simple-modal>

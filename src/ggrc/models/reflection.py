@@ -153,14 +153,6 @@ class AttributeInfo(object):
     self._aliases = AttributeInfo.gather_aliases(tgt_class)
 
   @classmethod
-  def iter_bases_attrs(cls, tgt_class, src_attrs):
-    src_attrs = src_attrs if type(src_attrs) is list else [src_attrs]
-    for base in tgt_class.mro():
-      for attr in src_attrs:
-        if attr in tgt_class.__dict__:
-          yield getattr(tgt_class, attr, None)
-
-  @classmethod
   def gather_attr_dicts(cls, tgt_class, src_attr):
     """ Gather dictionaries from target class parets """
     result = {}

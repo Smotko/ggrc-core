@@ -105,7 +105,7 @@ class TestWithSimilarityScore(integration.ggrc.TestCase):
             "expression": {
                 "op": {"name": "similar"},
                 "object_name": "Assessment",
-                "id": self.assessment.id,
+                "ids": [str(self.assessment.id)],
             },
         },
     }]
@@ -133,7 +133,7 @@ class TestWithSimilarityScore(integration.ggrc.TestCase):
             "expression": {
                 "op": {"name": "similar"},
                 "object_name": "Assessment",
-                "id": self.assessment.id,
+                "ids": [str(self.assessment.id)],
             },
         },
     }]

@@ -1,0 +1,18 @@
+{{!
+    Copyright (C) 2016 Google Inc.
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+<div class="simple-modal {{extraCssCls}} {{modalCls}}">
+    <div class="modal-header">
+        <h4>Prior Responses</h4>
+        <a class="modal-dismiss" can-click="hide">
+            <i class="fa fa-times black"></i>
+        </a>
+    </div>
+    <div class="modal-body">
+      {{#state.open}}
+          <content></content>
+      {{/state.open}}
+    </div>
+</div>
+<div class="simple-modal__overlay {{modalOverlayCls}}"></div>

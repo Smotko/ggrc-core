@@ -9,6 +9,8 @@
   var tpl = can.view(GGRC.mustache_path +
     '/components/assessment/mapped-objects/mapped-objects.mustache');
   var tag = 'assessment-mapped-objects';
+  var itemTplsBasePath = GGRC.mustache_path +
+    '/components/assessment/mapped-objects/item-templates/';
   /**
    * Assessment specific mapped objects view component
    */
@@ -18,34 +20,56 @@
     scope: {
       titleText: '@',
       filter: '@',
-      mapping: null,
+      mapping: '@',
       mappingType: '@',
       expanded: true,
+      selectedItem: null,
       parentInstance: null,
-      mappedObjects: [],
+      mappedItems: [],
       itemsTpl: '@',
+      getComputedItemsTpl: function (tpl) {
+        return itemTplsBasePath + tpl + '.mustache';
+      },
+      filterFn: function (item) {
+        var isControlOnly = this.filter === 'control';
+        var isControlType = item.instance.type === 'Control';
+        if (isControlOnly) {
+          return isControlType;
+        }
+        return !isControlType;
+      },
+      filterItems: function (objects) {
+        objects = objects.serialize();
+        return objects
+          .map(function (obj) {
+            if (this.filterFn(obj)) {
+              return obj;
+            }
+          }.bind(this))
+          .filter(function (item) {
+            return Boolean(item);
+          });
+      },
       setMappedObjects: function (items) {
-        this.attr('mappedObjects', items);
+        items = this.filterItems(items);
+        this.attr('mappedItems').replace(items);
       },
       load: function () {
-        this.parentInstance
-          .get_binding(this.mapping)
+        this.attr('parentInstance')
+          .get_binding(this.attr('mapping'))
           .refresh_instances()
           .then(this.setMappedObjects.bind(this));
       }
     },
-    init: function (el) {
-      var scope = this.scope;
-      el = can.$(el);
-
-      if (!scope.attr('mapping')) {
-        scope.attr('mapping', el.attr('mapping'));
-      }
-
+    init: function () {
       this.scope.load();
     },
-    '{scope.parentInstance} change': function () {
-      this.scope.load();
+    helpers: {
+      renderItemsTpl: function (options) {
+        var tpl = this.attr('itemsTpl');
+        tpl = this.getComputedItemsTpl(tpl);
+        return can.view.render(tpl, options.scope);
+      }
     }
   });
 })(window.can, window.GGRC);

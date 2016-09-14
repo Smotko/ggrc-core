@@ -61,6 +61,8 @@
         if (personModel) {
           personModel = personModel.reify();
         }
+      } else if (person) {
+        personModel = person;
       }
       // For some reason the cache sometimes contains partially loaded objects,
       // thus we also need to check if "email" (a required field) is present.

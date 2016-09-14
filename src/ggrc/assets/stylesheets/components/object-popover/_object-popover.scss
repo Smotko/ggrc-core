@@ -1,0 +1,21 @@
+/*
+ * Copyright (C) 2016 Google Inc.
+ * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+
+object-popover {
+
+  > .object-popover-body {
+    position: absolute;
+    box-sizing: border-box;
+    max-width: 700px;
+    max-height: 0;
+    opacity: 0.3;
+    width: 0;
+    z-index: 999;
+    box-shadow: 1px 3px 9px 2px rgba(0,0,0,0.12);
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 1);
+    overflow: hidden;
+  }
+}

@@ -2,92 +2,53 @@
     Copyright (C) 2016 Google Inc., authors, and contributors
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
-<div class="assessment-mapped-objects__popover" style="{{openStyle}}">
-    <div class="assessment-mapped-objects__popover-body">
-        <div class="assessment-mapped-objects__popover-title">
-            <a href="{{selectedItem.viewLink}}" target="_blank">{{selectedItem.title}}</a></div>
-        <div class="assessment-mapped-objects__popover-content">
+{{#itemData}}
+    <div class="assessment-mapped-objects__popover-title">
+        <a href="{{itemData.viewLink}}" target="_blank">{{itemData.title}}</a></div>
+    <div class="assessment-mapped-objects__popover-content">
+        <div>
+            <h6>Description</h6>
+            <read-more text="itemData.description"></read-more>
+        </div>
+        <div>
+            <h6>Notes</h6>
+            <read-more text="itemData.notes"></read-more>
+        </div>
+        <div class="assessment-mapped-objects__popover-attributes">
             <div>
-                <h6>Description</h6>
-                <read-more text="selectedItem.description"></read-more>
+                <h6>Code</h6>
+                <span>{{itemData.slug}}</span>
             </div>
             <div>
-                <h6>Notes</h6>
-                <read-more text="selectedItem.notes"></read-more>
+                <h6>Owner</h6>
+                {{#if itemData.owners.length}}
+                    <ul class="inner-count-list">
+                      {{#each itemData.owners}}
+                          <li>
+                            <person-info person-id="{{id}}"></person-info>
+                          </li>
+                      {{/each}}
+                    </ul>
+                {{else}}
+                  <span class="empty-message">None</span>
+                {{/if}}
             </div>
-            <div class="assessment-mapped-objects__popover-attributes">
-                <div>
-                    <h6>Code</h6>
-                    <span>{{{firstnonempty selectedItem.slug '<span class="empty-message">None</span>'}}}</span>
-                </div>
-                <div>
-                  {{#if selectedItem.is_program}}
-                      <h6>Manager</h6>
-                      <div class="oneline">
-                        {{#with_mapping 'authorizations' selectedItem}}
-                          {{#if selectedItem.authorizations.length}}
-                            {{#each selectedItem.authorizations}}
-                                <span>
-                                  {{#using role=selectedItem.role}}
-                                    {{#if_equals role.name 'ProgramOwner'}}
-                                      {{#using contact=selectedItem.person}}
-                                        {{{renderLive '/static/mustache/people/popover.mustache' person=contact}}}
-                                      {{/using}}
-                                    {{/if_equals}}
-                                  {{/using}}
-                                </span>
-                            {{/each}}
-                          {{else}}
-                              <span class="empty-message">None</span>
-                          {{/if}}
-                        {{/with_mapping}}
-                      </div>
-                  {{else}}
-                      <h6>Owner</h6>
-                      <div class="oneline">
-                        {{#if selectedItem.owners.length}}
-                          {{#using contacts=selectedItem.owners}}
-                              <ul class="inner-count-list">
-                                {{#each contacts}}
-                                    <li>
-                                      {{#using person=this}}
-                                        {{>'/static/mustache/people/popover.mustache'}}
-                                      {{/using}}
-                                    </li>
-                                {{/each}}
-                              </ul>
-                          {{/using}}
-                        {{else}}
-                            <span class="empty-message">None</span>
-                        {{/if}}
-                      </div>
-                  {{/if}}
-                </div>
-                <div>
-                    <h6>Primary Contact</h6>
-                  {{#using person=selectedItem.contact}}
-                      <div class="oneline">
-                        {{#if person}}
-                          {{>'/static/mustache/people/popover.mustache'}}
-                        {{else}}
-                            <span class="empty-message">None</span>
-                        {{/if}}
-                      </div>
-                  {{/using}}
-                </div>
-                <div>
-                    <h6>Secondary Contact</h6>
-                  {{#using person=selectedItem.secondary_contact}}
-                      <div class="oneline">
-                        {{#if person}}
-                          {{>'/static/mustache/people/popover.mustache'}}
-                        {{else}}
-                            <span class="empty-message">None</span>
-                        {{/if}}
-                      </div>
-                  {{/using}}
-                </div>
+            <div>
+                <h6>Primary Contact</h6>
+                {{#if itemData.contact}}
+                    <person-info person-obj="itemData.contact"></person-info>
+                {{else}}
+                    <span class="empty-message">None</span>
+                {{/if}}
+            </div>
+            <div>
+                <h6>Secondary Contact</h6>
+                {{#if itemData.secondary_contact}}
+                    <person-info person-obj="itemData.secondary_contact"></person-info>
+                {{else}}
+                    <span class="empty-message">None</span>
+                {{/if}}
             </div>
         </div>
     </div>
-</div>
+{{/itemData}}

@@ -8,7 +8,7 @@
 
   var tpl = can.view(GGRC.mustache_path +
     '/components/ca-object/ca-object-modal.mustache');
-  var baseCls = 'attachment-modal';
+  var baseCls = 'simple-modal';
 
   function recalculatePosition(el) {
     var pos = el[0].getBoundingClientRect();

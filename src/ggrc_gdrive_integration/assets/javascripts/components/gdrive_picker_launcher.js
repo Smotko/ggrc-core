@@ -270,19 +270,7 @@
                 }).save();
               }
 
-              return $.when(
-                objectDoc
-              ).then(function (ofs) {
-                if (ofs.length < 1) {
-                  if (that.deferred) {
-                    doc.mark_for_addition('files', file, {
-                      context: that.instance.context || {id: null}
-                    });
-                  }
-                }})
-              .then(function () {
-                return doc;
-              });
+              return objectDoc;
             });
             return dfdDoc;
           });

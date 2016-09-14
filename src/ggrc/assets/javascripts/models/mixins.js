@@ -7,11 +7,12 @@
   can.Construct('can.Model.Mixin', {
     extend: function (fullName, klass, proto) {
       var tempname;
+      var mixinName;
       var parts;
       var shortName;
       var Constructor;
 
-      if (typeof fullName === "string") {
+      if (typeof fullName === 'string') {
         // Mixins do not go into the global namespace.
         tempname = fullName;
         fullName = '';
@@ -28,21 +29,27 @@
           'Mixin_' + Math.floor(Math.random() * Math.pow(36, 8)).toString(36);
         parts = [];
       }
-      can.getObject('CMS.Models.Mixins' + (parts.length ? '.' + parts.join('.') : ''), window, true)[shortName] = Constructor;
+      mixinName = 'CMS.Models.Mixins' + (parts.length ?
+        '.' + parts.join('.') :
+          '');
+      can.getObject(mixinName, window, true)[shortName] = Constructor;
       return Constructor;
     },
     newInstance: function () {
-      throw 'Mixins cannot be directly instantiated';
+      throw new Error('Mixins cannot be directly instantiated');
     },
     add_to: function (cls) {
       var setupfns;
       if (this === can.Model.Mixin) {
-        throw 'Must only add a subclass of Mixin to an object, not Mixin itself';
+        throw new Error('Must only add a subclass of Mixin to an object,' +
+          ' not Mixin itself');
       }
       setupfns = function (obj) {
         return function (fn, key) {
           var blockedKeys = ['fullName', 'defaults', '_super', 'constructor'];
-          var aspect = ~key.indexOf(':') ? key.substr(0, key.indexOf(':')) : 'after';
+          var aspect = ~key.indexOf(':') ?
+            key.substr(0, key.indexOf(':')) :
+            'after';
           var oldfn;
 
           key = ~key.indexOf(':') ? key.substr(key.indexOf(':') + 1) : key;
@@ -162,7 +169,7 @@
       }
     }
   });
-
+  // TODO: remove this mixin and all related logic from Front-end part
   can.Model.Mixin('relatable', {
   }, {
     related_self: function () {
@@ -242,10 +249,10 @@
           });
           relatable.resolve(
             _.map(_.sortBy(_.filter(connectionsCount, function (item) {
-                if (item.count >= threshold) {
-                  return item;
-                }
-              }), 'count').reverse(),
+              if (item.count >= threshold) {
+                return item;
+              }
+            }), 'count').reverse(),
               function (item) {
                 return item.object;
               }));

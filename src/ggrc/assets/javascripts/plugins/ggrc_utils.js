@@ -28,11 +28,17 @@
         return 0;
       }
     },
+    events: {
+      isInnerClick: function (el, target) {
+        el = el instanceof $ ? el : $(el);
+        return el.has(target).length || el.is(target);
+      }
+    },
     inViewport: function (el) {
       var bounds;
       var isVisible;
 
-      el = el instanceof jQuery ? el[0] : el;
+      el = el instanceof $ ? el[0] : el;
       bounds = el.getBoundingClientRect();
 
       isVisible = this.win.innerHeight > bounds.bottom &&

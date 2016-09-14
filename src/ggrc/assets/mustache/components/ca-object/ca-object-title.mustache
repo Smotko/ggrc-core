@@ -6,7 +6,9 @@
     <span class="inline-edit__title-body">{{titleText}}
       {{#def.helptext}}<i class="fa fa-question-circle" rel="tooltip" title="{{def.helptext}}"></i>{{/def.helptext}}
       </span>
-    <span class="inline-edit__extra-controls">
-      {{#value}}<i can-click="addComment" class="fa fa-edit" rel="tooltip" title="Add comment"></i>{{/value}}
-    </span>
+      {{#is_allowed 'update' instance context='for'}}
+        <span class="inline-edit__extra-controls">
+          {{#value}}<i can-click="addComment" class="fa fa-edit" rel="tooltip" title="Add comment"></i>{{/value}}
+        </span>
+      {{/is_allowed}}
 </h6>

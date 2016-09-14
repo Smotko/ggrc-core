@@ -14,17 +14,20 @@ collapsible-panel {
     margin: 0;
 
     collapsible-panel-body {
-      border-top: 1px solid #ccc;
+      > .body-inner {
+        padding: 0;
+        border-top: 1px solid #ccc;
 
-      &[expanded] {
-        border-top: 1px solid transparent;
+        &.is-expanded {
+          padding: 4px 8px 4px 24px;
+          border-top: 1px solid transparent;
+        }
       }
     }
 
     collapsible-panel-header {
-      height: 42px;
-      line-height: 42px;
-      //border-bottom: 1px solid #ccc;
+      height: 46px;
+      line-height: 46px;
 
       .title-text {
         text-transform: capitalize;
@@ -33,8 +36,8 @@ collapsible-panel {
       }
 
       .fa {
-        height: 42px;
-        line-height: 42px;
+        height: 46px;
+        line-height: 46px;
       }
     }
   }
@@ -94,16 +97,9 @@ collapsible-panel-header {
 }
 
 collapsible-panel-body {
-   > .body-inner {
-     padding: 4px 8px 4px 24px;
-     display: none;
-  }
-
-  &[expanded] {
-    > .body-inner {
-      display: block;
-      transition: display 0.3s ease;
-    }
+  > .body-inner {
+    padding: 4px 8px 4px 24px;
+    position: relative;
   }
 }
 

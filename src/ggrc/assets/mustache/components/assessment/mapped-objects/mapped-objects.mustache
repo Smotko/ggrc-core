@@ -17,11 +17,11 @@
       </i>
   {{/is_allowed}}
 </collapsible-panel-header>
-<collapsible-panel-body {{#expanded}}expanded{{/expanded}}>
-    <assessment-mapped-objects-filter items="mappedObjects" filter="filter">
-        <assessment-mapped-objects-list items="filteredItems" items-tpl="itemsTpl">
-            <assessment-mapped-objects-popover selected-el="selectedEl"
-                                               selected-item="selectedItem"></assessment-mapped-objects-popover>
-        </assessment-mapped-objects-list>
-    </assessment-mapped-objects-filter>
+<collapsible-panel-body expanded="expanded">
+    <object-list items="mappedItems" selected-item="selectedItem">
+      {{{renderItemsTpl}}}
+    </object-list>
+    <object-popover item="selectedItem">
+        <assessment-mapped-objects-popover item-data="itemData"></assessment-mapped-objects-popover>
+    </object-popover>
 </collapsible-panel-body>

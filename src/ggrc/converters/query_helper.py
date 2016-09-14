@@ -417,7 +417,7 @@ class QueryHelper(object):
                                  "relationships similarity"
                                  .format(similar_class.__name__))
       similar_objects_query = similar_class.get_similar_objects_query(
-          id_=exp["id"],
+          id_=exp["ids"][0],
           types=[object_class.__name__],
       )
       flask.g.similar_objects_query = similar_objects_query

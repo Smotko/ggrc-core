@@ -185,6 +185,9 @@
 
     events: {
       inserted: function () {
+        this.scope.attr('mapper.selected').replace([]);
+        this.scope.attr('mapper.entries').replace([]);
+
         this.setModel();
         this.setBinding();
       },

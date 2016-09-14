@@ -9,15 +9,13 @@ Copyright (C) 2016 Google Inc.
             <h6>title</h6>
             <div class="pane-header__title">
                 <h3>{{title}}</h3>
-              {{^if_in instance.status 'Verified, Completed'}}
                   <span class="state-value">{{status}}</span>
-              {{/if_in}}
-              {{#if verified}}
-                  <i class="fa fa-check-circle green"
-                     rel="tooltip"
-                     title="Verified on {{localize_date verified_date}}">
-                  </i>
-              {{/if}}
+                  {{#if verified}}
+                    <i class="fa fa-check-circle green"
+                      rel="tooltip"
+                      title="Verified on {{localize_date verified_date}}">
+                    </i>
+                  {{/if}}
             </div>
         </div>
         <div class="span3">

@@ -1,0 +1,16 @@
+{{!
+    Copyright (C) 2016 Google Inc.
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+<content></content>
+<reusable-objets-item-control>
+  {{#is_allowed 'update' baseInstance context='for'}}
+    {{#is_allowed 'update' instance context='for'}}
+      {{#if isDisabled}}
+          <input type="checkbox" checked disabled/>
+      {{else}}
+          <input type="checkbox" {{#isLoading}}disabled{{/isLoading}}/>
+      {{/if}}
+    {{/is_allowed}}
+  {{/is_allowed}}
+</reusable-objets-item-control>
