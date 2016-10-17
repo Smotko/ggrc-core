@@ -14,6 +14,7 @@ fi
 export DEV_PREFIX="$(cd ${DEV_PREFIX}; pwd -P)"
 
 export GGRC_SETTINGS_MODULE="development \
+  ggrc_permissions.settings.development \
   ggrc_basic_permissions.settings.development \
   ggrc_risk_assessments.settings.development \
   ggrc_risks.settings.development \
