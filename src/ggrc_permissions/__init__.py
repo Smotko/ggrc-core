@@ -5,6 +5,8 @@
 
 from flask import Blueprint
 
+from ggrc_permissions.models.access_control_list import AccessControlList
+from ggrc_permissions.models.access_control_role import AccessControlRole
 
 # pylint: disable=invalid-name
 blueprint = Blueprint(
