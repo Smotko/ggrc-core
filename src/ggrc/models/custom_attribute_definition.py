@@ -50,7 +50,10 @@ class CustomAttributeDefinition(mixins.Base, mixins.Titled, db.Model):
   @definition.setter
   def definition(self, value):
     self.definition_id = getattr(value, 'id', None)
-    self.definition_type = getattr(value, 'type', "").lower()
+    if hasattr(value, '_inflector'):
+      self.definition_type = value._inflector.table_singular
+    else:
+      self.definition_type = ''
     return setattr(self, self.definition_attr, value)
 
   _extra_table_args = (
