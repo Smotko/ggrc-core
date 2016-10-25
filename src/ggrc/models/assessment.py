@@ -102,7 +102,7 @@ class Assessment(statusable.Statusable, AuditRelationship,
   operationally = deferred(db.Column(db.String), "Assessment")
 
   @declared_attr
-  def object_level_definitions(cls):
+  def object_level_definitions(self):
     """Set up a backref so that we can create an object level custom
        attribute definition without the need to do a flush to get the
        assessment id.
@@ -232,7 +232,7 @@ class Assessment(statusable.Statusable, AuditRelationship,
     return cls._get_relate_filter(predicate, "Verifier")
 
   @classmethod
-  def _ignore_filter(cls, predicate):
+  def _ignore_filter(cls, _):
     return None
 
 
