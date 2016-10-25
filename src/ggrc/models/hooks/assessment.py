@@ -238,8 +238,14 @@ def relate_ca(assessment, related):
   )
 
   for definition in ca_definitions:
-    db.make_transient(definition)
-    definition.id = None
-    definition.definition_id = assessment.id
-    definition.definition_type = assessment._inflector.table_singular
-    db.session.add(definition)
+    cad = all_models.CustomAttributeDefinition(
+        title=definition.title,
+        definition=assessment,
+        attribute_type=definition.attribute_type,
+        multi_choice_options=definition.multi_choice_options,
+        multi_choice_mandatory=definition.multi_choice_mandatory,
+        mandatory=definition.mandatory,
+        helptext=definition.helptext,
+        placeholder=definition.placeholder,
+    )
+    db.session.add(cad)
