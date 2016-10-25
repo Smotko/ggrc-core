@@ -39,6 +39,20 @@ class CustomAttributeDefinition(mixins.Base, mixins.Titled, db.Model):
   attribute_values = db.relationship('CustomAttributeValue',
                                      backref='custom_attribute')
 
+  @property
+  def definition_attr(self):
+    return '{0}_definition'.format(self.definition_type)
+
+  @property
+  def definition(self):
+    return getattr(self, self.definition_attr)
+
+  @definition.setter
+  def definition(self, value):
+    self.definition_id = getattr(value, 'id', None)
+    self.definition_type = getattr(value, 'type', "").lower()
+    return setattr(self, self.definition_attr, value)
+
   _extra_table_args = (
       UniqueConstraint('definition_type', 'definition_id', 'title',
                        name='uq_custom_attribute'),

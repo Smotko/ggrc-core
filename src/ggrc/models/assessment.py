@@ -3,12 +3,16 @@
 
 """Module for Assessment object"""
 
+from sqlalchemy import and_
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import remote
 from sqlalchemy.orm import validates
 
 from ggrc import db
 from ggrc.models import reflection
 from ggrc.models.audit import Audit
 from ggrc.models.comment import Commentable
+from ggrc.models.custom_attribute_definition import CustomAttributeDefinition
 from ggrc.models.mixins import BusinessObject
 from ggrc.models.mixins import CustomAttributable
 from ggrc.models.mixins import FinishedDate
@@ -96,6 +100,26 @@ class Assessment(statusable.Statusable, AuditRelationship,
 
   design = deferred(db.Column(db.String), "Assessment")
   operationally = deferred(db.Column(db.String), "Assessment")
+
+  @declared_attr
+  def object_level_definitions(cls):
+    """Set up a backref so that we can create an object level custom
+       attribute definition without the need to do a flush to get the
+       assessment id.
+
+      This is used in the relate_ca method in hooks/assessment.py.
+    """
+    return db.relationship(
+        'CustomAttributeDefinition',
+        primaryjoin=lambda: and_(
+            remote(CustomAttributeDefinition.definition_id) == Assessment.id,
+            remote(CustomAttributeDefinition.definition_type) == "assessment"),
+        foreign_keys=[
+            CustomAttributeDefinition.definition_id,
+            CustomAttributeDefinition.definition_type
+        ],
+        backref='assessment_definition',
+        cascade='all, delete-orphan')
 
   object = {}  # we add this for the sake of client side error checking
   audit = {}
