@@ -35,7 +35,7 @@ try:
 except (ImportError):
   pass
 
-VERSION = "0.9.8-Raspberry" + BUILD_NUMBER
+VERSION = "0.10.0-Raspberry" + BUILD_NUMBER
 
 # Google Analytics variables
 GOOGLE_ANALYTICS_ID = os.environ.get('GGRC_GOOGLE_ANALYTICS_ID', '')
