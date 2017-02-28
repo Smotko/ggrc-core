@@ -144,7 +144,10 @@
             var data = responseArr[0];
             var values = data.Snapshot.values;
             var result = values.map(function (item) {
-              return {instance: item, isSelected: false};
+              return {
+                instance: new CMS.Models.Snapshot(item),
+                isSelected: false
+              };
             });
             dfd.resolve(result);
           })
