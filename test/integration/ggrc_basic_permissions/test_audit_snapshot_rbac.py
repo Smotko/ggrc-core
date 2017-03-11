@@ -23,8 +23,8 @@ DEFAULT_LACK_OF_PERMISSIONS = {
     "Audit": 403
 }
 DEFAULT_AUDITOR_PERMISSIONS = {
-    "Snapshot": 403,
-    "Audit": 200
+    "Snapshot": 200,
+    "Audit": 403
 }
 
 
