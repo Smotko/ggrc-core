@@ -12,14 +12,6 @@ owner_base = [
     "ControlCategory",
     "ControlAssertion",
     {
-        "type": "Issue",
-        "terms": {
-            "list_property": "owners",
-            "value": "$current_user"
-        },
-        "condition": "contains"
-    },
-    {
         "type": "Control",
         "terms": {
             "list_property": "owners",
@@ -238,8 +230,6 @@ permissions = {
         "ControlAssertion",
         "Control",
         "Comment",
-        "Assessment",
-        "Issue",
         "DataAsset",
         "AccessGroup",
         "Directive",

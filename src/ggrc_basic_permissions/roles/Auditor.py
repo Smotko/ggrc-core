@@ -12,6 +12,7 @@ permissions = {
         "Assessment",
         "Issue",
         "Meeting",
+        "Snapshot",
         "ObjectDocument",
         "ObjectPerson",
         "Relationship",
@@ -32,8 +33,8 @@ permissions = {
     ],
     "update": [
         "Assessment",
+        "Snapshot", # Needed for mapping snapshots to Assessments/Issues
         "Issue",
-        "Audit",
     ],
     "delete": [
         "Assessment",

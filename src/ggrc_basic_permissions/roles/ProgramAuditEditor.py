@@ -28,6 +28,7 @@ permissions = {
         "Snapshot",
         "Comment",
         "Assessment",
+        "AssessmentTemplate",
         "Issue",
         "Meeting",
         "ObjectControl",
@@ -42,22 +43,8 @@ permissions = {
         "__GGRC_ALL__"
     ],
     "update": [
-        {
-            "type": "Assessment",
-            "terms": {
-                "list_property": "owners",
-                "value": "$current_user"
-            },
-            "condition": "contains"
-        },
-        {
-            "type": "Issue",
-            "terms": {
-                "list_property": "owners",
-                "value": "$current_user"
-            },
-            "condition": "contains"
-        },
+        "Assessment",
+        "Issue",
         "Snapshot",
         "Audit",
         "AuditObject",
