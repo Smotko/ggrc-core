@@ -6,7 +6,7 @@ Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 <related-objects base-instance="instance" related-items-type="Issue">
     <div class="grid-data-toolbar flex-box">
         <tree-pagination paging="paging" class="flex-size-1"></tree-pagination>
-      {{#is_allowed 'update' baseInstance context='for'}}
+      {{#is_allowed 'create' 'Issue' context=baseInstance.context}}
           <div class="grid-data-toolbar-control">
             {{#with_mapping 'related_audits' baseInstance}}
               {{#with_mapping 'related_controls' baseInstance}}

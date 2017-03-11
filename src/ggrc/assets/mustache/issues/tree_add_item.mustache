@@ -3,7 +3,7 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
 
-{{#is_allowed 'update' parent_instance context='for'}}
+{{#is_allowed 'create' model.shortName context=parent_instance.context}}
   <a href="javascript://"
      class="action-button create-button"
      rel="tooltip"

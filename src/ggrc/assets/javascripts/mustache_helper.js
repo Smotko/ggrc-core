@@ -3205,13 +3205,7 @@ Mustache.registerHelper('with_create_issue_json', function (instance, options) {
   var audit;
   var json;
   var relatedSnapshots = [];
-  var canMap;
-  var isAllowedToMap = function (obj) {
-    if (_.isEmpty(obj)) {
-      return true;
-    }
-    return Permission.is_allowed_for('update', obj);
-  };
+
   instance = Mustache.resolve(instance);
   audits = instance.get_mapping('related_audits');
   if (!audits.length) {
@@ -3243,15 +3237,10 @@ Mustache.registerHelper('with_create_issue_json', function (instance, options) {
       table_singular: instance.class.table_singular
     }
   };
-  // Check permissions
-  canMap =
-    [audit, instance].every(isAllowedToMap) &&
-    relatedSnapshots.every(isAllowedToMap);
-  if (canMap) {
-    return options.fn(options.contexts.add(
-        {create_issue_json: JSON.stringify(json)}));
-  }
-  return options.inverse(options.contexts);
+
+  return options.fn(options.contexts.add({
+      create_issue_json: JSON.stringify(json)
+  }));
 });
 
 Mustache.registerHelper('pretty_role_name', function (name) {
