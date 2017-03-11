@@ -837,15 +837,6 @@ def create_audit_context(audit):
       modified_by=get_current_user(),
   ))
 
-  # Create the audit -> program implication
-  db.session.add(ContextImplication(
-      source_context=context,
-      context=audit.context,
-      source_context_scope='Audit',
-      context_scope='Program',
-      modified_by=get_current_user(),
-  ))
-
   db.session.add(audit)
 
   # Create the role implication for Auditor from Audit for default context
