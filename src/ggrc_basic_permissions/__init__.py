@@ -520,16 +520,10 @@ def load_context_relationships(permissions):
   read_contexts = set(
       permissions.get('read', {}).
       get('Program', {}).
-      get('contexts', []) +
-      permissions.get('read', {}).
-      get('Audit', {}).
       get('contexts', []))
   write_contexts = set(
       permissions.get('update', {}).
       get('Program', {}).
-      get('contexts', []) +
-      permissions.get('update', {}).
-      get('Audit', {}).
       get('contexts', []))
   read_only_contexts = read_contexts - write_contexts
 
