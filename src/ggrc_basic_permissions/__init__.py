@@ -76,6 +76,7 @@ def objects_via_assignable_query(user_id, context_not_role=True):
 
   rel1 = aliased(all_models.Relationship, name="rel1")
   rel2 = aliased(all_models.Relationship, name="rel2")
+  od = aliased(all_models.ObjectDocument, name="od")
   _attrs = aliased(all_models.RelationshipAttr, name="attrs")
 
   def assignable_join(query):
@@ -102,6 +103,14 @@ def objects_via_assignable_query(user_id, context_not_role=True):
             (rel2.destination_type == rel1.destination_type,
              rel2.source_type)
         ], else_=rel2.destination_type).label('type'),
+        rel1.context_id if context_not_role else literal('R')
+    ).select_from(rel1)
+
+  def related_documents():
+    """Header for the object_documents join"""
+    return db.session.query(
+        od.document_id.label('id'),
+        literal('Document').label('type'),
         rel1.context_id if context_not_role else literal('R')
     ).select_from(rel1)
 
@@ -146,6 +155,28 @@ def objects_via_assignable_query(user_id, context_not_role=True):
               (rel1.destination_type == "Person",
                rel1.source_type)
           ], else_=rel1.destination_type) == rel2.source_type))
+  ).union(assignable_join(
+      # Join by destination:
+      related_documents()).join(od, and_(
+          case([
+              (rel1.destination_type == "Person",
+               rel1.source_id)
+          ], else_=rel1.destination_id) == od.documentable_id,
+          case([
+              (rel1.destination_type == "Person",
+               rel1.source_type)
+          ], else_=rel1.destination_type) == od.documentable_type))
+  ).union(assignable_join(
+      # Join by source:
+      related_documents()).join(od, and_(
+          case([
+              (rel1.destination_type == "Person",
+               rel1.source_id)
+          ], else_=rel1.destination_id) == od.documentable_id,
+          case([
+              (rel1.destination_type == "Person",
+               rel1.source_type)
+          ], else_=rel1.destination_type) == od.documentable_type))
   )
   return mapped_objects.union(assigned_objects)
 
