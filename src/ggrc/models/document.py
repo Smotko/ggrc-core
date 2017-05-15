@@ -26,8 +26,11 @@ class Document(Ownable, Relatable, Base, Indexed, db.Model):
   year_id = deferred(db.Column(db.Integer), 'Document')
   language_id = deferred(db.Column(db.Integer), 'Document')
 
-  object_documents = db.relationship(
-      'ObjectDocument', backref='document', cascade='all, delete-orphan')
+  URL = 1
+  ATTACHMENT = 2
+  document_type = deferred(db.Column(db.Integer, default=URL, nullable=False),
+                           'Document')
+
   kind = db.relationship(
       'Option',
       primaryjoin='and_(foreign(Document.kind_id) == Option.id, '
@@ -57,7 +60,6 @@ class Document(Ownable, Relatable, Base, Indexed, db.Model):
       'title',
       'link',
       'description',
-      'object_documents',
       'kind',
       'year',
       'language',
@@ -99,4 +101,4 @@ class Document(Ownable, Relatable, Base, Indexed, db.Model):
         orm.joinedload('kind'),
         orm.joinedload('year'),
         orm.joinedload('language'),
-        orm.subqueryload('object_documents'))
+    )
