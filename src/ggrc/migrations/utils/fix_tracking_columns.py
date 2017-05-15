@@ -50,7 +50,6 @@ tables = {
         "notification_configs",
         "notification_types",
         "notifications",
-        "object_documents",
         "object_owners",
         "object_people",
         "objectives",

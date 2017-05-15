@@ -29,7 +29,7 @@ from ggrc.models.mixins.autostatuschangeable import AutoStatusChangeable
 from ggrc.models.mixins.validate_on_complete import ValidateOnComplete
 from ggrc.models.mixins.with_similarity_score import WithSimilarityScore
 from ggrc.models.deferred import deferred
-from ggrc.models.object_document import EvidenceURL
+from ggrc.models.object_document import PublicDocumentable
 from ggrc.models.object_person import Personable
 from ggrc.models.reflection import PublishOnly
 from ggrc.models.relationship import Relatable
@@ -76,7 +76,7 @@ def reindex_by_relationship(relationship):
 
 class Assessment(Roleable, statusable.Statusable, AuditRelationship,
                  AutoStatusChangeable, Assignable, HasObjectState, TestPlanned,
-                 CustomAttributable, EvidenceURL, Commentable,
+                 CustomAttributable, PublicDocumentable, Commentable,
                  Personable, reminderable.Reminderable, Timeboxed, Relatable,
                  WithSimilarityScore, FinishedDate, VerifiedDate,
                  ValidateOnComplete, Notifiable, BusinessObject, Indexed,
@@ -157,10 +157,6 @@ class Assessment(Roleable, statusable.Statusable, AuditRelationship,
                                       ['user_name', 'email', 'name']),
       MultipleSubpropertyFullTextAttr('related_verifiers', 'verifiers',
                                       ['user_name', 'email', 'name']),
-      MultipleSubpropertyFullTextAttr('document_evidence', 'document_evidence',
-                                      ['title', 'link']),
-      MultipleSubpropertyFullTextAttr('document_url', 'document_url',
-                                      ['link']),
   ]
 
   @classmethod
@@ -240,14 +236,6 @@ class Assessment(Roleable, statusable.Statusable, AuditRelationship,
   def verifiers(self):
     """Get the list of verifier assignees"""
     return self.assignees_by_type.get("Verifier", [])
-
-  @property
-  def document_evidence(self):
-    return self.documents_by_type("document_evidence")
-
-  @property
-  def document_url(self):
-    return self.documents_by_type("document_url")
 
   def validate_conclusion(self, value):
     return value if value in self.VALID_CONCLUSIONS else None

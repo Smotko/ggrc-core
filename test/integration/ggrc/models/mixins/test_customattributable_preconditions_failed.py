@@ -194,12 +194,12 @@ class TestPreconditionsFailed(TestCase):
         dropdown_parameters=("foo,evidence_required", "0,2"),
         value="evidence_required",
     )
-    evidence = factories.DocumentFactory(
+    evidence = factories.EvidenceFactory(
         title="Mandatory evidence",
     )
-    factories.ObjectDocumentFactory(
-        documentable=self.assessment,
-        document=evidence,
+    factories.RelationshipFactory(
+        source=self.assessment,
+        destination=evidence,
     )
 
     preconditions_failed = self.assessment.preconditions_failed
@@ -285,12 +285,12 @@ class TestPreconditionsFailed(TestCase):
         value="evidence_required"
     )
     # only one evidence provided yet
-    evidence = factories.DocumentFactory(
+    evidence = factories.EvidenceFactory(
         title="Mandatory evidence",
     )
-    factories.ObjectDocumentFactory(
-        documentable=self.assessment,
-        document=evidence,
+    factories.RelationshipFactory(
+        source=self.assessment,
+        destination=evidence,
     )
 
     preconditions_failed = self.assessment.preconditions_failed
@@ -300,12 +300,12 @@ class TestPreconditionsFailed(TestCase):
     self.assertEqual(ca2.value.preconditions_failed, ["evidence"])
 
     # the second evidence
-    evidence = factories.DocumentFactory(
+    evidence = factories.EvidenceFactory(
         title="Second mandatory evidence",
     )
-    factories.ObjectDocumentFactory(
-        documentable=self.assessment,
-        document=evidence,
+    factories.RelationshipFactory(
+        source=self.assessment,
+        destination=evidence,
     )
 
     preconditions_failed = self.assessment.preconditions_failed

@@ -151,12 +151,8 @@ class TestAssessmentImport(TestCase):
 
     # Check that there is only one attachment left
     asmt1 = assessments["Assessment 1"]
-    self.assertEqual(len(asmt1.documents), 1)
-
-    # Check that there are only the two new URLs present in asessment 1
-    url_titles = set(obj.title for obj in asmt1.related_objects()
-                     if isinstance(obj, models.Document))
-    self.assertEqual(url_titles, set(["a.b.com", "c d com"]))
+    self.assertEqual({"a.b.com", "c d com"},
+                     {i.title for i in asmt1.document_url})
 
   def test_assessment_warnings_errors(self):
     """ Test full assessment import with warnings and errors

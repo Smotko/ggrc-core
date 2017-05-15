@@ -32,7 +32,4 @@ class TestControlsImport(TestCase):
     evidence = models.Document.query.filter_by(title="Some title 3").all()
     self.assertEqual(len(evidence), 1)
     control = models.Control.query.filter_by(slug="control-3").first()
-    self.assertEqual(
-        control.object_documents[0].document.title,
-        "Some title 3"
-    )
+    self.assertEqual(control.document_evidence[0].title, "Some title 3")

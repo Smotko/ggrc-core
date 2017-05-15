@@ -280,10 +280,11 @@ class DocumentFactory(ModelFactory):
     model = models.Document
 
 
-class ObjectDocumentFactory(ModelFactory):
+class UrlFactory(DocumentFactory):
+  document_type = models.Document.URL
 
-  class Meta:
-    model = models.ObjectDocument
+class EvidenceFactory(DocumentFactory):
+  document_type = models.Document.ATTACHMENT
 
 
 class ObjectiveFactory(TitledFactory):

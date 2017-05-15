@@ -10,7 +10,7 @@ from ggrc.models.mixins import (
     BusinessObject, Timeboxed, CustomAttributable, TestPlanned
 )
 from ggrc.models.deferred import deferred
-from ggrc.models.object_document import EvidenceURL
+from ggrc.models.object_document import PublicDocumentable
 from ggrc.models.object_owner import Ownable
 from ggrc.models.object_person import Personable
 from ggrc.models.relationship import Relatable
@@ -19,7 +19,7 @@ from ggrc.fulltext.mixin import Indexed
 
 
 class Issue(Roleable, HasObjectState, TestPlanned, CustomAttributable,
-            EvidenceURL, Personable, Timeboxed, Ownable, Relatable,
+            PublicDocumentable, Personable, Timeboxed, Ownable, Relatable,
             AuditRelationship, BusinessObject, Indexed, db.Model):
   """Issue Model."""
 

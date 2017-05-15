@@ -21,7 +21,6 @@ from ggrc.models import CustomAttributeDefinition
 from ggrc.models import CustomAttributeValue
 from ggrc.models import Notification
 from ggrc.models import NotificationType
-from ggrc.models import ObjectDocument
 from ggrc.models import Revision
 from ggrc.models import Relationship
 from integration.ggrc import TestCase
@@ -1072,84 +1071,6 @@ class TestAssignableNotificationUsingAPI(TestAssignableNotification):
 
     url = factories.DocumentFactory(link="www.abc.com")
     response, relationship = self.objgen.generate_relationship(url, asmt)
-    self.assertEqual(response.status_code, 201)
-
-    reopened_notifs = self._get_notifications(notif_type="assessment_reopened")
-    self.assertEqual(reopened_notifs.count(), 1)
-
-  @patch("ggrc.notifications.common.send_email")
-  def test_changing_assessment_attachment_triggers_notifications(self, _):
-    """Test that changing Assessment attachment results in change notification.
-
-    Adding (removing) an attachment to (from) Assessment should be detected and
-    considered an Assessment change.
-    """
-    self.import_file("assessment_with_templates.csv")
-    asmts = {asmt.slug: asmt for asmt in Assessment.query}
-
-    self.client.get("/_notifications/send_daily_digest")
-    self.assertEqual(self._get_notifications().count(), 0)
-
-    asmt = Assessment.query.get(asmts["A 5"].id)
-
-    # add an attachment, there should be no notifications because the
-    # Assessment has not been started yet
-    pdf_doc = factories.DocumentFactory(title="foo.pdf")
-    data = {
-        "document": {"type": pdf_doc.type, "id": pdf_doc.id},
-        "documentable": {"type": asmt.type, "id": asmt.id}
-    }
-    response, obj_doc = self.objgen.generate_object(ObjectDocument, data=data)
-    self.assertEqual(response.status_code, 201)
-
-    change_notifs = self._get_notifications(notif_type="assessment_updated")
-    self.assertEqual(change_notifs.count(), 0)
-    asmt = Assessment.query.get(asmts["A 5"].id)
-
-    # move Assessment to to "In Progress" state and clear notifications
-    self.api_helper.modify_object(
-        asmt, {"status": Assessment.PROGRESS_STATE})
-
-    self.client.get("/_notifications/send_daily_digest")
-    self.assertEqual(self._get_notifications().count(), 0)
-    asmt = Assessment.query.get(asmts["A 5"].id)
-
-    # attach another document, change notification should be created
-    image = factories.DocumentFactory(link="foobar.png")
-    data = {
-        "document": {"type": image.type, "id": image.id},
-        "documentable": {"type": asmt.type, "id": asmt.id}
-    }
-    response, _ = self.objgen.generate_object(ObjectDocument, data=data)
-    self.assertEqual(response.status_code, 201)
-
-    change_notifs = self._get_notifications(notif_type="assessment_updated")
-    self.assertEqual(change_notifs.count(), 1)
-
-    # clear notifications, remove an attachment, test for change notification
-    self.client.get("/_notifications/send_daily_digest")
-    self.assertEqual(change_notifs.count(), 0)
-    asmt = Assessment.query.get(asmts["A 5"].id)
-
-    self.api_helper.delete(obj_doc)
-
-    change_notifs = self._get_notifications(notif_type="assessment_updated")
-    self.assertEqual(change_notifs.count(), 1)
-
-    # changing attachments completed should result in "reopened" notification
-    asmt = Assessment.query.get(asmts["A 5"].id)
-    self.api_helper.modify_object(
-        asmt, {"status": Assessment.FINAL_STATE})
-    self.client.get("/_notifications/send_daily_digest")
-    self.assertEqual(self._get_notifications().count(), 0)
-    asmt = Assessment.query.get(asmts["A 5"].id)
-
-    file_foo = factories.DocumentFactory(link="foo.txt")
-    data = {
-        "document": {"type": file_foo.type, "id": file_foo.id},
-        "documentable": {"type": asmt.type, "id": asmt.id}
-    }
-    response, _ = self.objgen.generate_object(ObjectDocument, data=data)
     self.assertEqual(response.status_code, 201)
 
     reopened_notifs = self._get_notifications(notif_type="assessment_reopened")

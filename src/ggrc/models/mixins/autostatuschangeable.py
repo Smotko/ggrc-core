@@ -11,7 +11,6 @@ from sqlalchemy.orm.session import Session
 
 from ggrc import db
 from ggrc.models import relationship
-from ggrc.models import object_document
 from ggrc.services import signals
 from ggrc.models.mixins import statusable
 
@@ -310,22 +309,6 @@ class AutoStatusChangeable(object):
             handlers[k](model, target_object, obj,
                         method=service.request.method)
 
-    @signals.Restful.model_posted.connect_via(object_document.ObjectDocument)
-    @signals.Restful.model_deleted.connect_via(object_document.ObjectDocument)
-    def handle_objectdocument_post(sender, obj=None, src=None, service=None):
-      """Handles addition and deletion of evidences
-
-      Adding evidence moves object back to PROGRESS_STATE.
-
-      See blinker library documentation for other parameters (all necessary).
-
-      Args:
-        obj: (db.Model instance) Object on which we will perform manipulation.
-      """
-      # pylint: disable=unused-argument,unused-variable
-
-      if obj.documentable.type == model.__name__:
-        cls.handle_first_class_edit(model, obj.documentable)
 
 # pylint: disable=fixme
 # TODO: find a way to listen for updates only for classes that use

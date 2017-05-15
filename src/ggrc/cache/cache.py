@@ -42,7 +42,6 @@ def all_cache_entries():
       resource('helps', 'Help'),
       resource('markets', 'Market'),
       resource('meetings', 'Meeting'),
-      resource('object_documents', 'ObjectDocument'),
       resource('object_owners', 'ObjectOwner'),
       resource('object_people', 'ObjectPerson'),
       resource('objectives', 'Objective'),

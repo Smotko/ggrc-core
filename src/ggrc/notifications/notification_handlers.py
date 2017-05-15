@@ -454,11 +454,3 @@ def register_handlers():  # noqa: C901
   @signals.Restful.model_deleted.connect_via(models.Relationship)
   def relationship_deleted_listener(sender, obj=None, src=None, service=None):
     handle_relationship_altered(obj)
-
-  @signals.Restful.model_posted.connect_via(models.ObjectDocument)
-  def document_attached_listener(sender, obj=None, src=None, service=None):
-    handle_attachment_altered(obj)
-
-  @signals.Restful.model_deleted.connect_via(models.ObjectDocument)
-  def document_detached_listener(sender, obj=None, src=None, service=None):
-    handle_attachment_altered(obj)

@@ -219,7 +219,6 @@ class TestCase(BaseTestCase, object):
     api.set_user(person)  # Ok if person is None
     response = api.client.post("/_service/import_csv",
                                data=data, headers=headers)
-
     return json.loads(response.data)
 
   def import_file(self, filename, dry_run=False, person=None):
