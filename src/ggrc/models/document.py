@@ -54,6 +54,7 @@ class Document(Ownable, Relatable, Base, Indexed, db.Model):
       'title',
       'link',
       'description',
+      "document_type",
   ]
 
   _publish_attrs = [
@@ -63,6 +64,7 @@ class Document(Ownable, Relatable, Base, Indexed, db.Model):
       'kind',
       'year',
       'language',
+      "document_type",
   ]
 
   _sanitize_html = [
