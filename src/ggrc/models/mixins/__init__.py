@@ -78,7 +78,7 @@ class Identifiable(object):
     return query.options(*options)
 
   @declared_attr
-  def __table_args__(cls):
+  def __table_args__(cls):  # pylint: disable=no-self-argument
     extra_table_args = AttributeInfo.gather_attrs(cls, '_extra_table_args')
     table_args = []
     table_dict = {}
@@ -106,12 +106,12 @@ class ChangeTracked(object):
   creation time of the model, and the last time the model was updated.
   """
   @declared_attr
-  def modified_by_id(cls):
+  def modified_by_id(cls):  # pylint: disable=no-self-argument
     """Id of user who did the last modification of the object."""
     return deferred(db.Column(db.Integer), cls.__name__)
 
   @declared_attr
-  def created_at(cls):
+  def created_at(cls):  # pylint: disable=no-self-argument
     """Date of creation. Set to current time on object creation."""
     column = db.Column(
         db.DateTime,
@@ -121,7 +121,7 @@ class ChangeTracked(object):
     return deferred(column, cls.__name__)
 
   @declared_attr
-  def updated_at(cls):
+  def updated_at(cls):  # pylint: disable=no-self-argument
     """Date of last update. Set to current time on object creation/update."""
     column = db.Column(
         db.DateTime,
@@ -132,7 +132,7 @@ class ChangeTracked(object):
     return deferred(column, cls.__name__)
 
   @declared_attr
-  def modified_by(cls):
+  def modified_by(cls):  # pylint: disable=no-self-argument
     """Relationship to user referenced by modified_by_id."""
     return db.relationship(
         'Person',
@@ -201,7 +201,7 @@ class Titled(object):
     return value if value is None else value.strip()
 
   @declared_attr
-  def title(cls):
+  def title(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.String, nullable=False), cls.__name__)
 
   @classmethod
@@ -231,7 +231,7 @@ class Described(object):
   """Mixin that defines `description` field."""
 
   @declared_attr
-  def description(cls):
+  def description(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.Text), cls.__name__)
 
   # REST properties
@@ -251,7 +251,7 @@ class Noted(object):
   """Mixin that defines `notes` field."""
 
   @declared_attr
-  def notes(cls):
+  def notes(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.Text), cls.__name__)
 
   # REST properties
@@ -271,11 +271,11 @@ class Hyperlinked(object):
   """Mixin that defines `url` and `reference_url` fields."""
 
   @declared_attr
-  def url(cls):
+  def url(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.String), cls.__name__)
 
   @declared_attr
-  def reference_url(cls):
+  def reference_url(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.String), cls.__name__)
 
   # REST properties
@@ -301,13 +301,13 @@ class Hierarchical(object):
   """Mixin that defines `parent` and `child` fields to organize hierarchy."""
 
   @declared_attr
-  def parent_id(cls):
+  def parent_id(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(
         db.Integer, db.ForeignKey('{0}.id'.format(cls.__tablename__))),
         cls.__name__)
 
   @declared_attr
-  def children(cls):
+  def children(cls):  # pylint: disable=no-self-argument
     return db.relationship(
         cls.__name__,
         backref=db.backref(
@@ -344,11 +344,11 @@ class Timeboxed(object):
   """Mixin that defines `start_date` and `end_date` fields."""
 
   @declared_attr
-  def start_date(cls):
+  def start_date(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.Date), cls.__name__)
 
   @declared_attr
-  def end_date(cls):
+  def end_date(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.Date), cls.__name__)
 
   # REST properties
@@ -378,7 +378,7 @@ class Stateful(object):
   """
 
   @declared_attr
-  def status(cls):
+  def status(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(
         db.String, default=cls.default_status, nullable=False), cls.__name__)
 
@@ -433,7 +433,7 @@ class FinishedDate(object):
   # pylint: disable=method-hidden
   # because validator only sets date per model instance
   @declared_attr
-  def finished_date(cls):
+  def finished_date(cls):  # pylint: disable=no-self-argument
     return deferred(
         db.Column(db.DateTime, nullable=True),
         cls.__name__
@@ -492,7 +492,7 @@ class VerifiedDate(object):
   # pylint: disable=method-hidden
   # because validator only sets date per model instance
   @declared_attr
-  def verified_date(cls):
+  def verified_date(cls):  # pylint: disable=no-self-argument
     return deferred(
         db.Column(db.DateTime, nullable=True),
         cls.__name__
@@ -546,11 +546,11 @@ class ContextRBAC(object):
   """Defines `context` relationship for Context-based access control."""
 
   @declared_attr
-  def context_id(cls):
+  def context_id(cls):  # pylint: disable=no-self-argument
     return db.Column(db.Integer, db.ForeignKey('contexts.id'))
 
   @declared_attr
-  def context(cls):
+  def context(cls):  # pylint: disable=no-self-argument
     return db.relationship('Context', uselist=False)
 
   @staticmethod
@@ -736,7 +736,7 @@ class Slugged(Base):
   """
 
   @declared_attr
-  def slug(cls):
+  def slug(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.String, nullable=False), cls.__name__)
 
   @staticmethod
@@ -819,24 +819,24 @@ class WithContact(object):
   """Mixin that defines `contact` and `secondary_contact` fields."""
 
   @declared_attr
-  def contact_id(cls):
+  def contact_id(cls):  # pylint: disable=no-self-argument
     return deferred(
         db.Column(db.Integer, db.ForeignKey('people.id')), cls.__name__)
 
   @declared_attr
-  def secondary_contact_id(cls):
+  def secondary_contact_id(cls):  # pylint: disable=no-self-argument
     return deferred(
         db.Column(db.Integer, db.ForeignKey('people.id')), cls.__name__)
 
   @declared_attr
-  def contact(cls):
+  def contact(cls):  # pylint: disable=no-self-argument
     return db.relationship(
         'Person',
         uselist=False,
         foreign_keys='{}.contact_id'.format(cls.__name__))
 
   @declared_attr
-  def secondary_contact(cls):
+  def secondary_contact(cls):  # pylint: disable=no-self-argument
     return db.relationship(
         'Person',
         uselist=False,
@@ -914,7 +914,7 @@ class TestPlanned(object):
   """Mixin that defines `test_plan` field."""
 
   @declared_attr
-  def test_plan(cls):
+  def test_plan(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.Text), cls.__name__)
 
   # REST properties

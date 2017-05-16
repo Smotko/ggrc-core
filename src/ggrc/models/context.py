@@ -15,7 +15,7 @@ class Context(Base, db.Model):
   #  which we do not use for Context because indexing Context descriptions
   #  for fulltext search leads to undesirable results
   @declared_attr
-  def description(cls):
+  def description(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.Text), cls.__name__)
 
   name = deferred(db.Column(db.String(128), nullable=True), 'Context')
@@ -57,7 +57,7 @@ class HasOwnContext(object):
   """
 
   @declared_attr
-  def contexts(cls):
+  def contexts(cls):  # pylint: disable=no-self-argument
     joinstr = 'and_(foreign(Context.related_object_id) == {type}.id, '\
               'foreign(Context.related_object_type) == "{type}")'
     joinstr = joinstr.format(type=cls.__name__)

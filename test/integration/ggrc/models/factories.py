@@ -283,6 +283,7 @@ class DocumentFactory(ModelFactory):
 class UrlFactory(DocumentFactory):
   document_type = models.Document.URL
 
+
 class EvidenceFactory(DocumentFactory):
   document_type = models.Document.ATTACHMENT
 

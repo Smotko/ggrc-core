@@ -1,6 +1,8 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
+""" Module for docuumentable mixins."""
+
 from sqlalchemy import orm, case, and_
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -26,7 +28,7 @@ class Documentable(object):
 
   @classmethod
   def documents(cls, document_type):
-    """ """
+    """Return documents releated for that instance and sent docuemtn type."""
     document_id = case(
         [(
             Relationship.destination_type == "Document",
@@ -49,15 +51,16 @@ class Documentable(object):
     )
 
   @declared_attr
-  def document_url(cls):
+  def document_url(cls):  # pylint: disable=no-self-argument
     return cls.documents(Document.URL)
 
   @declared_attr
-  def document_evidence(cls):
+  def document_evidence(cls):  # pylint: disable=no-self-argument
     return cls.documents(Document.ATTACHMENT)
 
   @classmethod
   def eager_query(cls):
+    """Eager query classmethod."""
     query = super(Documentable, cls).eager_query()
     document_fields = ["id", "title", "link", "description", "document_type"]
     return cls.eager_inclusions(query, Documentable._include_links).options(

@@ -39,7 +39,7 @@ class CustomAttributable(object):
   _update_raw = ['custom_attribute_values']
 
   @declared_attr
-  def custom_attribute_definitions(self):
+  def custom_attribute_definitions(cls):  # pylint: disable=no-self-argument
     """Load custom attribute definitions"""
     from ggrc.models.custom_attribute_definition\
         import CustomAttributeDefinition
@@ -48,20 +48,20 @@ class CustomAttributable(object):
       """Object and CAD join function."""
       definition_id = foreign(CustomAttributeDefinition.definition_id)
       definition_type = foreign(CustomAttributeDefinition.definition_type)
-      return and_(or_(definition_id == self.id, definition_id.is_(None)),
-                  definition_type == self._inflector.table_singular)
+      return and_(or_(definition_id == cls.id, definition_id.is_(None)),
+                  definition_type == cls._inflector.table_singular)
 
     return relationship(
         "CustomAttributeDefinition",
         primaryjoin=join_function,
-        backref='{0}_custom_attributable_definition'.format(self.__name__),
+        backref='{0}_custom_attributable_definition'.format(cls.__name__),
         order_by=(CustomAttributeDefinition.definition_id.desc(),
                   CustomAttributeDefinition.id.asc()),
         viewonly=True,
     )
 
   @declared_attr
-  def _custom_attributes_deletion(self):
+  def _custom_attributes_deletion(cls):  # pylint: disable=no-self-argument
     """This declared attribute is used only for handling cascade deletions
        for CustomAttributes. This is done in order not to try to delete
        "global" custom attributes that don't have any definition_id related.
@@ -77,8 +77,8 @@ class CustomAttributable(object):
       """Join condition used for deletion"""
       definition_id = foreign(CustomAttributeDefinition.definition_id)
       definition_type = foreign(CustomAttributeDefinition.definition_type)
-      return and_(definition_id == self.id,
-                  definition_type == self._inflector.table_singular)
+      return and_(definition_id == cls.id,
+                  definition_type == cls._inflector.table_singular)
 
     return relationship(
         "CustomAttributeDefinition",
@@ -88,18 +88,18 @@ class CustomAttributable(object):
     )
 
   @declared_attr
-  def _custom_attribute_values(self):
+  def _custom_attribute_values(cls):  # pylint: disable=no-self-argument
     """Load custom attribute values"""
     from ggrc.models.custom_attribute_value import CustomAttributeValue
 
     def join_function():
       return and_(
-          foreign(CustomAttributeValue.attributable_id) == self.id,
-          foreign(CustomAttributeValue.attributable_type) == self.__name__)
+          foreign(CustomAttributeValue.attributable_id) == cls.id,
+          foreign(CustomAttributeValue.attributable_type) == cls.__name__)
     return relationship(
         "CustomAttributeValue",
         primaryjoin=join_function,
-        backref='{0}_custom_attributable'.format(self.__name__),
+        backref='{0}_custom_attributable'.format(cls.__name__),
         cascade='all, delete-orphan',
     )
 

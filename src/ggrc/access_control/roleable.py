@@ -29,15 +29,15 @@ class Roleable(object):
   ]
 
   @declared_attr
-  def _access_control_list(self):
+  def _access_control_list(cls):  # pylint: disable=no-self-argument
     """access_control_list"""
     return db.relationship(
         'AccessControlList',
         primaryjoin=lambda: and_(
-            remote(AccessControlList.object_id) == self.id,
-            remote(AccessControlList.object_type) == self.__name__),
+            remote(AccessControlList.object_id) == cls.id,
+            remote(AccessControlList.object_type) == cls.__name__),
         foreign_keys='AccessControlList.object_id',
-        backref='{0}_object'.format(self.__name__),
+        backref='{0}_object'.format(cls.__name__),
         cascade='all, delete-orphan')
 
   @hybrid_property

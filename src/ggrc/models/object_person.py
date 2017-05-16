@@ -68,7 +68,7 @@ class ObjectPerson(Timeboxed, Base, db.Model):
 class Personable(object):
 
   @declared_attr
-  def object_people(cls):
+  def object_people(cls):  # pylint: disable=no-self-argument
     cls.people = association_proxy(
         'object_people', 'person',
         creator=lambda person: ObjectPerson(

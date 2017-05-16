@@ -31,7 +31,7 @@ class Risk(Roleable, HasObjectState, mixins.CustomAttributable,
 
   # Overriding mixin to make mandatory
   @declared_attr
-  def description(cls):
+  def description(cls):  # pylint: disable=no-self-argument
     return deferred(db.Column(db.Text, nullable=False), cls.__name__)
 
   risk_objects = db.relationship(

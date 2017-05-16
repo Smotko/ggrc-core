@@ -49,7 +49,7 @@ class ControlAssertion(CategoryBase):
 class ControlCategorized(Categorizable):
 
   @declared_attr
-  def categorizations(cls):
+  def categorizations(cls):  # pylint: disable=no-self-argument
     return cls.declare_categorizable(
         "ControlCategory", "category", "categories", "categorizations")
 
@@ -82,7 +82,7 @@ class ControlCategorized(Categorizable):
 class AssertionCategorized(Categorizable):
 
   @declared_attr
-  def categorized_assertions(cls):
+  def categorized_assertions(cls):  # pylint: disable=no-self-argument
     return cls.declare_categorizable(
         "ControlAssertion", "assertion", "assertions",
         "categorized_assertions")

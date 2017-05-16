@@ -79,12 +79,12 @@ class CustomAttributeValue(Base, Indexed, db.Model):
     return (self.attributable_type, self.attributable_id)
 
   @declared_attr
-  def _related_revisions(self):
+  def _related_revisions(cls):  # pylint: disable=no-self-argument
     def join_function():
       """Function to join CAV to its latest revision."""
       resource_id = foreign(Revision.resource_id)
       resource_type = foreign(Revision.resource_type)
-      return and_(resource_id == self.id,
+      return and_(resource_id == cls.id,
                   resource_type == "CustomAttributeValue")
 
     return db.relationship(

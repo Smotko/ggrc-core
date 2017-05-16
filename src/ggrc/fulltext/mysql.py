@@ -38,12 +38,12 @@ class MysqlRecordProperty(db.Model):
   content = db.Column(db.Text)
 
   @declared_attr
-  def __table_args__(self):
+  def __table_args__(cls):  # pylint: disable=no-self-argument
     return (
-        db.Index('ix_{}_tags'.format(self.__tablename__), 'tags'),
-        db.Index('ix_{}_key'.format(self.__tablename__), 'key'),
-        db.Index('ix_{}_type'.format(self.__tablename__), 'type'),
-        db.Index('ix_{}_context_id'.format(self.__tablename__), 'context_id'),
+        db.Index('ix_{}_tags'.format(cls.__tablename__), 'tags'),
+        db.Index('ix_{}_key'.format(cls.__tablename__), 'key'),
+        db.Index('ix_{}_type'.format(cls.__tablename__), 'type'),
+        db.Index('ix_{}_context_id'.format(cls.__tablename__), 'context_id'),
     )
 
 

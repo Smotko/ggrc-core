@@ -99,7 +99,7 @@ class Commentable(object):
     )
 
   @declared_attr
-  def comments(self):
+  def comments(cls):  # pylint: disable=no-self-argument
     """Comments related to self via Relationship table."""
     comment_id = case(
         [(Relationship.destination_type == "Comment",
@@ -114,7 +114,7 @@ class Commentable(object):
 
     return db.relationship(
         Comment,
-        primaryjoin=lambda: self.id == commentable_id,
+        primaryjoin=lambda: cls.id == commentable_id,
         secondary=Relationship.__table__,
         secondaryjoin=lambda: Comment.id == comment_id,
         viewonly=True,

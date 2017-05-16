@@ -68,7 +68,7 @@ class Ownable(object):
   ]
 
   @declared_attr
-  def object_owners(cls):
+  def object_owners(cls):  # pylint: disable=no-self-argument
     cls.owners = association_proxy(
         'object_owners', 'person',
         creator=lambda person: ObjectOwner(

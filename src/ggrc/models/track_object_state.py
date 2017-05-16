@@ -31,7 +31,7 @@ class HasObjectState(object):
     super(HasObjectState, self).__init__(*args, **kwargs)
 
   @declared_attr
-  def os_state(cls):
+  def os_state(cls):  # pylint: disable=no-self-argument
     """os_state attribute is used to track object review status"""
     return deferred(db.Column(db.String, nullable=False,
                               default='Unreviewed'), cls.__name__)

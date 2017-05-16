@@ -260,7 +260,7 @@ class CustomAttributeMapable(object):
   # because this is a mixin
 
   @declared_attr
-  def related_custom_attributes(self):
+  def related_custom_attributes(cls):  # pylint: disable=no-self-argument
     """CustomAttributeValues that directly map to this object.
 
     Used just to get the backrefs on the CustomAttributeValue object.
@@ -271,8 +271,8 @@ class CustomAttributeMapable(object):
     return db.relationship(
         'CustomAttributeValue',
         primaryjoin=lambda: (
-            (CustomAttributeValue.attribute_value == self.__name__) &
-            (CustomAttributeValue.attribute_object_id == self.id)),
+            (CustomAttributeValue.attribute_value == cls.__name__) &
+            (CustomAttributeValue.attribute_object_id == cls.id)),
         foreign_keys="CustomAttributeValue.attribute_object_id",
-        backref='attribute_{0}'.format(self.__name__),
+        backref='attribute_{0}'.format(cls.__name__),
         viewonly=True)

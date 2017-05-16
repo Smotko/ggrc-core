@@ -112,7 +112,7 @@ class Assessment(Roleable, statusable.Statusable, AuditRelationship,
       'Assessment')
 
   @declared_attr
-  def object_level_definitions(self):
+  def object_level_definitions(cls):  # pylint: disable=no-self-argument
     """Set up a backref so that we can create an object level custom
        attribute definition without the need to do a flush to get the
        assessment id.
@@ -122,7 +122,7 @@ class Assessment(Roleable, statusable.Statusable, AuditRelationship,
     return db.relationship(
         'CustomAttributeDefinition',
         primaryjoin=lambda: and_(
-            remote(CustomAttributeDefinition.definition_id) == Assessment.id,
+            remote(CustomAttributeDefinition.definition_id) == cls.id,
             remote(CustomAttributeDefinition.definition_type) == "assessment"),
         foreign_keys=[
             CustomAttributeDefinition.definition_id,

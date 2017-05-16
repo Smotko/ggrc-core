@@ -147,7 +147,7 @@ event.listen(Relationship, 'before_update', Relationship.validate_attrs)
 class Relatable(object):
 
   @declared_attr
-  def related_sources(cls):
+  def related_sources(cls):  # pylint: disable=no-self-argument
     joinstr = 'and_(remote(Relationship.destination_id) == {type}.id, '\
         'remote(Relationship.destination_type) == "{type}")'
     joinstr = joinstr.format(type=cls.__name__)
@@ -159,7 +159,7 @@ class Relatable(object):
         cascade='all, delete-orphan')
 
   @declared_attr
-  def related_destinations(cls):
+  def related_destinations(cls):  # pylint: disable=no-self-argument
     joinstr = 'and_(remote(Relationship.source_id) == {type}.id, '\
         'remote(Relationship.source_type) == "{type}")'
     joinstr = joinstr.format(type=cls.__name__)
