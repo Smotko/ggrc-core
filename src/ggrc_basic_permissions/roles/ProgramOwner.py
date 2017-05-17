@@ -12,7 +12,7 @@ description = """
   """
 permissions = {
     "read": [
-        "ObjectDocument",
+        "Document",
         "ObjectPerson",
         "Program",
         "ProgramControl",
@@ -21,7 +21,7 @@ permissions = {
         "Context",
     ],
     "create": [
-        "ObjectDocument",
+        "Document",
         "ObjectPerson",
         "ProgramControl",
         "Relationship",
@@ -33,7 +33,7 @@ permissions = {
         "__GGRC_ALL__"
     ],
     "update": [
-        "ObjectDocument",
+        "Document",
         "ObjectPerson",
         "Program",
         "ProgramControl",
@@ -41,7 +41,7 @@ permissions = {
         "UserRole"
     ],
     "delete": [
-        "ObjectDocument",
+        "Document",
         "ObjectPerson",
         "Program",
         "ProgramControl",

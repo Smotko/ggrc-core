@@ -44,7 +44,6 @@ permissions = {
         "Market",
         "Objective",
         "ObjectControl",
-        "ObjectDocument",
         "ObjectObjective",
         "ObjectPerson",
         "Option",
@@ -99,14 +98,6 @@ permissions = {
         "Help",
         "Market",
         "Objective",
-        {
-            "type": "ObjectDocument",
-            "terms": {
-                "property_name": "documentable",
-                "action": "update",
-            },
-            "condition": "relationship",
-        },
         "ObjectPerson",
         "Option",
         "OrgGroup",

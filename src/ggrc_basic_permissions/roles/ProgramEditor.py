@@ -10,7 +10,7 @@ description = """
   """
 permissions = {
     "read": [
-        "ObjectDocument",
+        "Document",
         "ObjectObjective",
         "ObjectPerson",
         "Program",
@@ -21,7 +21,7 @@ permissions = {
     "create": [
         "Audit",
         "Snapshot",
-        "ObjectDocument",
+        "Document",
         "ObjectObjective",
         "ObjectPerson",
         "Relationship",
@@ -31,7 +31,7 @@ permissions = {
     ],
     "update": [
         "Snapshot",
-        "ObjectDocument",
+        "Document",
         "ObjectObjective",
         "ObjectPerson",
         "Program",
@@ -39,7 +39,7 @@ permissions = {
     ],
     "delete": [
         "Program",
-        "ObjectDocument",
+        "Document",
         "ObjectObjective",
         "ObjectPerson",
         "Relationship",

@@ -99,7 +99,6 @@ owner_base = [
         },
         "condition": "contains"
     },
-    "ObjectDocument",
     "ObjectOwner",
     "ObjectPerson",
     "Option",
@@ -243,7 +242,6 @@ permissions = {
         "Help",
         "Market",
         "Objective",
-        "ObjectDocument",
         "ObjectPerson",
         "Option",
         "OrgGroup",

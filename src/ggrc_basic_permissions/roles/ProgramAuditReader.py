@@ -15,7 +15,6 @@ permissions = {
         "Audit",
         "AuditObject",
         "Meeting",
-        "ObjectDocument",
         "ObjectPerson",
         "Relationship",
         "Document",

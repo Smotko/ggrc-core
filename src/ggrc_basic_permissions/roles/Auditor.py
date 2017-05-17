@@ -13,7 +13,6 @@ permissions = {
         "Issue",
         "Meeting",
         "Snapshot",
-        "ObjectDocument",
         "ObjectPerson",
         "Relationship",
         "Document",

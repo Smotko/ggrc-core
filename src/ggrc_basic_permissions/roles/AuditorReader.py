@@ -30,7 +30,6 @@ permissions = {
         "Help",
         "Market",
         "Objective",
-        "ObjectDocument",
         "ObjectPerson",
         "Option",
         "OrgGroup",

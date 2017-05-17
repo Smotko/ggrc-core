@@ -19,7 +19,6 @@ permissions = {
         "UserRole",
         "Context",
         "Document",
-        "ObjectDocument",
         "ObjectFolder",
         "ObjectFile",
     ],
