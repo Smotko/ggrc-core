@@ -111,8 +111,6 @@ def all_mapping_entries():
   ret = [
       mapping('Audit', 'program'),
       mapping('CustomAttributeValue', 'attributable', True),
-      mapping('ObjectDocument', 'document'),
-      mapping('ObjectDocument', 'documentable', True),
       mapping('ObjectOwner', 'person'),
       mapping('ObjectOwner', 'ownable', True),
       mapping('ObjectPerson', 'person'),
