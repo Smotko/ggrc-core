@@ -74,49 +74,44 @@ class Revision(Base, db.Model):
                  "destination_id"]:
       setattr(self, attr, getattr(obj, attr, None))
 
-  def _description_mapping(self, link_objects):
-    """Compute description for revisions with <-> in display name."""
-    display_name = self.content['display_name']
-    source, destination = display_name.split('<->')[:2]
-    mapping_verb = "linked" if self.resource_type in link_objects else "mapped"
-    if self.action == 'created':
-      result = u"{1} {2} to {0}".format(source, destination, mapping_verb)
-    elif self.action == 'deleted':
-      result = u"{1} un{2} from {0}".format(source, destination, mapping_verb)
-    else:
-      result = u"{0} {1}".format(display_name, self.action)
-    return result
-
   @computed_property
   def description(self):
     """Compute a human readable description from action and content."""
-    link_objects = ['ObjectDocument']
     if 'display_name' not in self.content:
       return ''
     display_name = self.content['display_name']
     if not display_name:
       result = u"{0} {1}".format(self.resource_type, self.action)
     elif u'<->' in display_name:
-      result = self._description_mapping(link_objects)
-    else:
-      if 'mapped_directive' in self.content:
-        # then this is a special case of combined map/creation
-        # should happen only for Section and Control
-        mapped_directive = self.content['mapped_directive']
-        if self.action == 'created':
-          result = u"New {0}, {1}, created and mapped to {2}".format(
-              self.resource_type,
-              display_name,
-              mapped_directive
-          )
-        elif self.action == 'deleted':
-          result = u"{0} unmapped from {1} and deleted".format(
-              display_name, mapped_directive)
-        else:
-          result = u"{0} {1}".format(display_name, self.action)
+      if self.action == 'created':
+        msg = u"{destination} linked to {source}"
+      elif self.action == 'deleted':
+        msg = u"{destination} unlinked from {source}"
       else:
-        # otherwise, it's a normal creation event
+        msg = u"{display_name} {action}"
+      source, destination = self.content['display_name'].split('<->')[:2]
+      result = msg.format(source=source,
+                          destination=destination,
+                          display_name=self.content['display_name'],
+                          action=self.action)
+    elif 'mapped_directive' in self.content:
+      # then this is a special case of combined map/creation
+      # should happen only for Section and Control
+      mapped_directive = self.content['mapped_directive']
+      if self.action == 'created':
+        result = u"New {0}, {1}, created and mapped to {2}".format(
+            self.resource_type,
+            display_name,
+            mapped_directive
+        )
+      elif self.action == 'deleted':
+        result = u"{0} unmapped from {1} and deleted".format(
+            display_name, mapped_directive)
+      else:
         result = u"{0} {1}".format(display_name, self.action)
+    else:
+      # otherwise, it's a normal creation event
+      result = u"{0} {1}".format(display_name, self.action)
     if self.event.action == "BULK":
       result += ", via bulk action"
     return result
