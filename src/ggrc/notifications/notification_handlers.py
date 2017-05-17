@@ -390,27 +390,6 @@ def handle_relationship_altered(rel):
     _add_state_change_notif(asmt, Transitions.TO_REOPENED)
 
 
-def handle_attachment_altered(rel):
-  """Handle attaching or detaching a document to an object.
-
-  If the object the attachments were altered for is an Assesment, a change
-  notification is created (unless the Assessment has not been started yet).
-
-  Args:
-    rel (ObjectDocument): an object describing the attachment relationship
-  """
-  if rel.documentable.type != u"Assessment":
-    return
-
-  asmt = rel.documentable
-  if asmt.status != Statusable.START_STATE:
-    _add_assessment_updated_notif(asmt)
-
-  # when modified, a done Assessment gets automatically reopened
-  if asmt.status in Statusable.DONE_STATES:
-    _add_state_change_notif(asmt, Transitions.TO_REOPENED)
-
-
 def register_handlers():  # noqa: C901
   """Register listeners for notification handlers."""
 
