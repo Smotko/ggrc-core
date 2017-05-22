@@ -14,7 +14,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = '59d9fbfb42dc'
-down_revision = '1ac595e94a23'
+down_revision = '59a7bd61e36a'
 
 
 INSERT_REL_SQL = """
