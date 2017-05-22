@@ -17,11 +17,30 @@ revision = '59d9fbfb42dc'
 down_revision = '1ac595e94a23'
 
 
+INSERT_REL_SQL = """
+INSERT INTO relationships (source_type, source_id, destination_type, destination_id)
+(
+    SELECT documentable_type AS source_type,
+           documentable_id AS source_id,
+           "Document" AS destination_type,
+           document_id AS destination_id
+    FROM object_documents WHERE not exists (
+        SELECT 1
+        FROM relationships
+        WHERE source_type=documentable_type AND
+              source_id=documentable_id AND
+              destination_type="Document" AND
+              destination_id=document_id
+));
+"""
+
 def upgrade():
   """Upgrade database schema and/or data, creating a new revision."""
   op.execute("ALTER TABLE documents ADD COLUMN document_type INT DEFAULT 1;")
   op.execute("Update documents set document_type = 2 where id in "
              "(select document_id from object_documents);")
+  op.execute(INSERT_REL_SQL)
+
 
 
 def downgrade():
