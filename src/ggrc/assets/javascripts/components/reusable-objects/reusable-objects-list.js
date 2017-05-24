@@ -15,10 +15,10 @@
       });
     },
     createObjectRelationship: function (source, destination) {
-      return new CMS.Models.ObjectDocument({
+      return new CMS.Models.Relationship({
         context: source.context,
-        documentable: source,
-        document: destination
+        source: source,
+        destination: destination
       });
     },
     isEvidence: function (type) {

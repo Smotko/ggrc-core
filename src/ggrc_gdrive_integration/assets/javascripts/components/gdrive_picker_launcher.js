@@ -242,10 +242,10 @@
                     context: that.instance.context || {id: null}
                   });
                 } else {
-                  objectDoc = new CMS.Models.ObjectDocument({
+                  objectDoc = new CMS.Models.Relationship({
                     context: that.instance.context || {id: null},
-                    documentable: that.instance,
-                    document: doc
+                    source: that.instance,
+                    destination: doc
                   }).save();
                 }
 
