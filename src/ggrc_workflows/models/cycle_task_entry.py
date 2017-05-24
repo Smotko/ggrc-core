@@ -8,10 +8,10 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from ggrc import db
 from ggrc.models.mixins import Base, Described
-from ggrc.models.object_document import Documentable
+from ggrc.models.relationship import Relatable
 
 
-class CycleTaskEntry(Described, Documentable, Base, db.Model):
+class CycleTaskEntry(Relatable, Described, Base, db.Model):
   """Workflow CycleTaskEntry model."""
 
   __tablename__ = 'cycle_task_entries'
