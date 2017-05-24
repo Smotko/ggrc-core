@@ -41,6 +41,10 @@
       kind: 'CMS.Models.Option.stub',
       year: 'CMS.Models.Option.stub'
     },
+    defaults: {
+      // TODO: Update when the backend changes this to bool/enum
+      document_type: 2
+    },
     tree_view_options: {
       show_view: GGRC.mustache_path + '/documents/tree.mustache',
       footer_view: GGRC.mustache_path + '/base_objects/tree_footer.mustache',
