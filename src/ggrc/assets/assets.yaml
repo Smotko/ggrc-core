@@ -157,7 +157,6 @@ dashboard-js-files:
   - components/collapsible-panel/collapsible-panel-header.js
   - components/collapsible-panel/collapsible-panel-body.js
   - components/read-more/read-more.js
-  - components/assessment/urls-list.js
   - components/assessment/attachments-list.js
   - components/assessment/custom-attributes.js
   - components/assessment/inline.js
@@ -323,7 +322,6 @@ dashboard-js-template-files:
   - components/assessment/mapped-objects/mapped-controls-popover.mustache
   - components/assessment/mapped-objects/mapped-related-information.mustache
   - components/assessment/mapped-objects/mapped-comments.mustache
-  - components/assessment/urls-list.mustache
   - components/assessment/attachments-list.mustache
   - components/assessment/custom-attributes.mustache
   - components/assessment/inline/inline.mustache
