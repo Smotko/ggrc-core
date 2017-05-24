@@ -68,9 +68,7 @@
       _canonical: {
         documents: 'Document'
       },
-      documents: Proxy(
-        'Document', 'document', 'ObjectDocument', 'documentable',
-        'object_documents')
+      documents: TypeFilter('related_objects', 'Document')
     },
     assignable: {
       urls: TypeFilter('related_objects', 'Document'),

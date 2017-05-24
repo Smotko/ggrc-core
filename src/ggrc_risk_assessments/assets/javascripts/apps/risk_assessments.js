@@ -50,8 +50,8 @@
         ),
         destinations: Direct('Relationship', 'source', 'related_destinations'),
         sources: Direct('Relationship', 'destination', 'related_sources'),
-        documents: Proxy('Document', 'document',
-          'ObjectDocument', 'documentable', 'object_documents'),
+        documents: TypeFilter('related_objects',
+          'Document'),
         cycle_task_group_object_tasks: TypeFilter('related_objects',
           'CycleTaskGroupObjectTask')
       }
