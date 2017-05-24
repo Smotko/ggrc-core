@@ -46,9 +46,7 @@
         return confirmation;
       },
       itemsUploadedCallback: function () {
-        if (this.instance instanceof CMS.Models.Assessment) {
-          this.instance.dispatch('refreshInstance');
-        }
+        this.instance.dispatch('refreshInstance');
       }
     }
   });
