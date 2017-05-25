@@ -84,14 +84,6 @@ Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
                                         {^show-items}="attachments">
                                     <document-object-list-item {instance}="instance"></document-object-list-item>
                                 </mapped-objects>
-                                <mapped-objects
-                                        {parent-instance}="instance"
-                                        mapping="all_urls"
-                                        {^is-loading}="loadingState.urlsLoading"
-                                        {empty-message}="noRelatedItemMessage"
-                                        {^show-items}="urls">
-                                    <document-object-list-item {instance}="instance"></document-object-list-item>
-                                </mapped-objects>
                                 {{#if showEmptyMessage}}
                                     <span class="empty-message">{{emptyMessage}}</span>
                                 {{/if}}

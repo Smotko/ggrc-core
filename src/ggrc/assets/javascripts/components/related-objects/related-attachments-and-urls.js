@@ -28,8 +28,7 @@
         loadingState: {},
         showEmptyMessage: {
           get: function () {
-            return !this.attr('loadingState.urlsLoading') &&
-              !this.attr('loadingState.attachmentsLoading') &&
+            return !this.attr('loadingState.attachmentsLoading') &&
               !this.attr('urls.length') &&
               !this.attr('attachments.length');
           }

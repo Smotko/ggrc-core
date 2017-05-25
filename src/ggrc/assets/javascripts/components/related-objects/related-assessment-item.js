@@ -15,7 +15,6 @@
       loadingState: {},
       subItemsLoading: function () {
         return this.attr('loadingState.auditLoading') ||
-          this.attr('loadingState.urlsLoading') ||
           this.attr('loadingState.attachmentsLoading') ||
           this.attr('loadingState.controlsLoading');
       }

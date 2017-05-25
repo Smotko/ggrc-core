@@ -98,24 +98,6 @@ Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
                                             <document-object-list-item {instance}="instance"></document-object-list-item>
                                         </reusable-objects-item>
                                     </mapped-objects>
-                                    <mapped-objects
-                                            {parent-instance}="instance"
-                                            mapping="all_urls"
-                                            {^is-loading}="loadingState.urlsLoading"
-                                            {empty-message}="noRelatedItemMessage"
-                                            {^show-items}="urls">
-                                        <reusable-objects-item {instance}="instance"
-                                                               {is-saving}="isSaving"
-                                                               {base-instance}="baseInstance"
-                                                               {mapping}="mapping"
-                                                               check-reused-status="checkReusedStatus"
-                                                               {(selected-list)}="urlList">
-                                            <document-object-list-item {instance}="instance"></document-object-list-item>
-                                        </reusable-objects-item>
-                                    </mapped-objects>
-                                    {{#if showEmptyMessage}}
-                                        <span class="empty-message">{{emptyMessage}}</span>
-                                    {{/if}}
                                 </related-attachments-and-urls>
                             </div>
                             <div class="grid-data__action-column">
