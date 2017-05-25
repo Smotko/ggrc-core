@@ -79,9 +79,7 @@
         }),
       comments: TypeFilter('related_objects', 'Comment'),
       documents_from_comments: Cross('comments', 'documents'),
-      urls_from_comments: Cross('comments', 'urls'),
-      all_documents: Multi(['documents', 'documents_from_comments']),
-      all_urls: Multi(['urls', 'urls_from_comments'])
+      all_documents: Multi(['documents', 'documents_from_comments'])
     },
     related_object: {
       _canonical: {
