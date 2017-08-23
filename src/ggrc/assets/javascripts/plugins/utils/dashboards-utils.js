@@ -94,7 +94,7 @@
         }
 
         cav = cavs.find(function (cav) {
-          return cav.custom_attribute_id === cad.id;
+          return cav && cav.custom_attribute_id === cad.id;
         });
 
         if (!cav) {
