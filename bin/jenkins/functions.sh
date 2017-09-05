@@ -103,8 +103,17 @@ selenium_tests () {
   PROJECT=$1
   print_line
 
+  echo "Resetting the DB"
+  docker exec -i ${PROJECT}_dev_1 su -c "
+    source /vagrant/bin/init_vagrant_env
+    db_reset
+  "
+
   echo "Running Test server"
-  docker exec -id ${PROJECT}_dev_1 /vagrant/bin/launch_ggrc_test
+  docker exec -id ${PROJECT}_dev_1 su -c "
+    source /vagrant/bin/init_vagrant_env
+    launch_ggrc
+  "
 
   echo "Running Selenium tests"
   docker exec -i ${PROJECT}_selenium_1 sh -c "
