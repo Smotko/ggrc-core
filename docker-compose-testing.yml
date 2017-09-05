@@ -1,15 +1,23 @@
 dev:
   build: .
-  dockerfile: Dockerfile-old
-  command: /sbin/my_init
+  dockerfile: Dockerfile
   volumes:
    - ".:/vagrant"
    - ".:/vagrant_bind"
-   - "./provision/docker/mysql:/etc/mysql/conf.d"
-  privileged: true
   environment:
    - PYTHONDONTWRITEBYTECODE=true
    - NODE_PATH=/vagrant-dev/node_modules/
+   - GGRC_DATABASE_URI=mysql+mysqldb://root:root@db/ggrcdev?charset=utf8
+   - GGRC_DATABASE_HOST=db
+  links:
+   - db
+
+db:
+  image: mysql:5.6
+  volumes:
+   - "./provision/docker/mysql:/etc/mysql/conf.d"
+  environment:
+   - MYSQL_ROOT_PASSWORD=root
 
 selenium:
   build: .
