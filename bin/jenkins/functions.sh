@@ -90,6 +90,7 @@ integration_tests () {
   echo "Running ${PROJECT}"
   docker exec -i ${PROJECT}_dev_1 su -c "
     source /vagrant/bin/init_vagrant_env
+    db_reset
     /vagrant/bin/run_integration
   " && rc=$? || rc=$?
 
