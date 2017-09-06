@@ -7,6 +7,7 @@ HOST=${GGRC_DATABASE_HOST-"127.0.0.1"}
 cd "${SCRIPTPATH}/../test"
 find . -iname "*.pyc" -delete
 mysql -uroot -proot -h$HOST -e "DROP DATABASE IF EXISTS ggrcdevtest; CREATE DATABASE ggrcdevtest CHARACTER SET utf8; USE ggrcdevtest;"
+export GGRC_DATABASE_URI="mysql+mysqldb://root:root@db/ggrcdevtest?charset=utf8"
 export GGRC_SETTINGS_MODULE="testing \
   ggrc_basic_permissions.settings.development \
   ggrc_risk_assessments.settings.development \
