@@ -91,7 +91,7 @@ integration_tests () {
   docker exec -i ${PROJECT}_dev_1 su -c "
     source /vagrant/bin/init_vagrant_env
     db_reset
-    /vagrant/bin/run_integration
+    nosetests test/integration --with-xunit --logging-clear-handlers -v
   " && rc=$? || rc=$?
 
   print_line
