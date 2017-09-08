@@ -98,8 +98,9 @@ describe('can.Model.Cacheable', function () {
     it('sets custom attributes', function () {
       // NB using $.extend here creates a new object with all of the static properties of the function.
       //  This is how the custom attributable is implemented in setup.
-      expect(GGRC.custom_attributable_types)
-        .toContain($.extend({}, CMS.Models.DummyModel));
+      expect(GGRC.custom_attributable_types.map(function (item) {
+        return item.fullName;
+      })).toContain(CMS.Models.DummyModel.fullName);
     });
   });
 
