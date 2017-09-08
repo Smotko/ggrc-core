@@ -5,6 +5,8 @@
 
 // = require can.jquery-all
 
+import './cacheable_conflict';
+
 (function (can, GGRC, CMS) {
   var _oldAttr;
   function makeFindRelated(thistype, othertype) {
@@ -335,6 +337,7 @@
         }
         GGRC.roleableTypes.push(can.extend({}, this));
       }
+      can.Model.CacheableConflict.initStatic.bind(this)();
     },
 
     resolve_deferred_bindings: function (obj) {
@@ -793,6 +796,7 @@
       if (!this._pending_joins) {
         this.attr('_pending_joins', []);
       }
+      can.Model.CacheableConflict.initProto.bind(this)();
     },
     load_custom_attribute_definitions: function () {
       var definitions;
