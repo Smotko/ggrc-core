@@ -174,56 +174,56 @@ describe('can.Model.Cacheable', function () {
         .then(function () {
           expect(CMS.Models.DummyModel.resolve_deferred_bindings)
             .toHaveBeenCalledWith(obj);
-          setTimeout(function () {
-            done();
-          }, 10);
+          setTimeout(done, 10);
         }, failAll(done));
     });
 
     describe('update conflict', function () {
-/*      it('triggers error flash when one property has an update conflict', function (done) {
-        var obj = _obj;
-        obj.attr('foo', 'bar');
-        obj.backup();
-        expect(obj._backupStore).toEqual(jasmine.objectContaining({id: obj.id, foo: 'bar'}));
-        obj.attr('foo', 'plonk');
-        spyOn($.fn, 'trigger').and.callThrough();
-        spyOn(obj, 'save').and.callFake(function () {
-          return new $.Deferred(function (dfd) {
-            setTimeout(function () {
-              dfd.resolve(obj);
-            }, 10);
-          });
-        });
-        spyOn(obj, 'refresh').and.callFake(function () {
-          obj.attr('foo', 'thud'); // uh-oh!  The same attr has been changed locally and remotely!
-          return new $.Deferred(function (dfd) {
-            setTimeout(function () {
-              dfd.resolve(obj);
-            }, 10);
-          });
-        });
-        spyOn(can, 'ajax')// .and.returnValue(new $.Deferred().reject({status: 409}, 409, "CONFLICT"));
-        .and.callFake(function () {
-          return new $.Deferred(function (dfd) {
-            setTimeout(function () {
-              dfd.reject({status: 409}, 409, 'CONFLICT');
-            }, 10);
-          });
-        });
-
-        CMS.Models.DummyModel.update(obj.id.toString(), obj.serialize()).then(function () {
-          fail("The update handler isn't supposed to resolve here.");
-          done();
-        }, function () {
-          expect($.fn.trigger).toHaveBeenCalledWith('ajax:flash', {warning: [jasmine.any(String)]});
+      function _resovleDfd(obj, reject) {
+        return new $.Deferred(function (dfd) {
           setTimeout(function () {
-            done();
+            if (!reject) {
+              dfd.resolve(obj);
+            } else {
+              dfd.reject(obj, 409, 'CONFLICT');
+            }
           }, 10);
         });
+      }
 
-      });
-*/
+      it('triggers error flash when one property has an update conflict',
+        function (done) {
+          var obj = _obj;
+          obj.attr('foo', 'bar');
+          obj.backup();
+
+          expect(obj._backupStore()).toEqual(
+            jasmine.objectContaining({id: obj.id, foo: 'bar'}));
+          obj.attr('foo', 'plonk');
+          spyOn($.fn, 'trigger').and.callThrough();
+          spyOn(obj, 'save').and.callFake(function () {
+            return _resovleDfd(obj);
+          });
+          spyOn(obj, 'refresh').and.callFake(function () {
+            obj.attr('foo', 'thud'); // uh-oh!  The same attr has been changed locally and remotely!
+            return _resovleDfd(obj);
+          });
+          spyOn(can, 'ajax')// .and.returnValue(new $.Deferred().reject({status: 409}, 409, "CONFLICT"));
+          .and.callFake(function () {
+            return _resovleDfd({status: 409}, true);
+          });
+          CMS.Models.DummyModel.update(obj.id.toString(), obj.serialize()).then(
+            function () {
+              fail("The update handler isn't supposed to resolve here.");
+              done();
+            }, function () {
+            expect($.fn.trigger).toHaveBeenCalledWith('ajax:flash', {
+              warning: [jasmine.any(String)]
+            });
+            done();
+          });
+        });
+
       it('does not refresh model', function (done) {
         var obj = _obj;
         spyOn(obj, 'refresh').and.returnValue($.when(obj));
@@ -251,12 +251,12 @@ describe('can.Model.Cacheable', function () {
         });
       });
 
-/*
+
       it('merges changed properties and saves', function (done) {
         var obj = _obj;
         obj.attr('foo', 'bar');
         obj.backup();
-        expect(obj._backupStore).toEqual(jasmine.objectContaining({id: obj.id, foo: 'bar'}));
+        expect(obj._backupStore()).toEqual(jasmine.objectContaining({id: obj.id, foo: 'bar'}));
         obj.attr('foo', 'plonk');
         spyOn(obj, 'save').and.returnValue($.when(obj));
         spyOn(obj, 'refresh').and.callFake(function () {
@@ -272,7 +272,7 @@ describe('can.Model.Cacheable', function () {
           }, 10);
         }, failAll(done));
       });
-*/
+
 
       it('lets other error statuses pass through', function (done) {
         var obj = new CMS.Models.DummyModel({id: 1});
