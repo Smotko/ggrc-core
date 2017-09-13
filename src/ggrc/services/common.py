@@ -840,6 +840,7 @@ class Resource(ModelView):
     with benchmark("Deserialize object"):
       self.json_update(obj, src)
     obj.modified_by_id = get_current_user_id()
+    obj.updated_at = datetime.datetime.now()
     db.session.add(obj)
     with benchmark("Query update permissions"):
       new_context = self.get_context_id_from_json(src)
