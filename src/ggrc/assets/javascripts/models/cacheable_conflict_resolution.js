@@ -29,10 +29,7 @@ export default function resolveConflict(xhr, obj) {
     });
     if (conflict) {
       $(document.body).trigger('ajax:flash', {
-        warning: 'There was a conflict while saving. ' +
-          'Your changes have not yet been saved. ' +
-          'please check any fields you were editing ' +
-          'and try saving again'
+        warning: GGRC.Errors.messages[409]
       });
       return new $.Deferred().reject(xhr, 409, 'CONFLICT');
     }
