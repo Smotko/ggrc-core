@@ -17,6 +17,7 @@
       fields: [],
       isDirty: false,
       saving: false,
+      error: false,
       highlightInvalidFields: false,
 
       define: {
@@ -183,8 +184,11 @@
         })
         .done(function () {
           self.attr('formSavedDeferred').resolve();
+          self.attr('error', false);
         })
-        // todo: error handling
+        .fail(function () {
+          self.attr('error', true);
+        })
         .always(function () {
           self.attr('saving', false);
           self.attr('isDirty', false);

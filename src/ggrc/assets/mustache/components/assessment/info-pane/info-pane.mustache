@@ -69,7 +69,8 @@
                     <div class="assessment-note">
 			<custom-attributes-status
                                 {form-saving}="formState.saving"
-                                {is-dirty}="formState.isDirty">
+                                {is-dirty}="formState.isDirty"
+                                {error}="formState.error">
                                 <loading-status
                                     {is-loading}="formSaving"
                                     {loading-text}="formStatusText"
@@ -167,6 +168,7 @@
                         {^saving}="formState.saving"
                         {^form-saved-deferred}="formState.formSavedDeferred"
                         {^is-dirty}="formState.isDirty"
+                        {^error}="formState.error"
                         (validation-changed)="showRequiredInfoModal(%event)">
 			<custom-attributes
                             {fields}="fields"
