@@ -16,7 +16,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = 'ba01ec28bff'
-down_revision = '2ada007df3ee'
+down_revision = '2cdde3aa3844'
 
 TABLES = ('programs', 'audits', 'controls', )
 
