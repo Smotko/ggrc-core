@@ -19,6 +19,7 @@ from ggrc.models import reflection
 from ggrc import utils
 from ggrc.fulltext.mixin import Indexed
 from ggrc.fulltext import get_indexer
+from ggrc.services.common import get_info, etag
 
 
 class CustomAttributeValue(Base, Indexed, db.Model):
@@ -32,6 +33,9 @@ class CustomAttributeValue(Base, Indexed, db.Model):
       'attributable_type',
       'attribute_value',
       'attribute_object',
+      reflection.Attribute('etag',
+                           create=False,
+                           update=False),
       reflection.Attribute('preconditions_failed',
                            create=False,
                            update=False),
@@ -303,6 +307,11 @@ class CustomAttributeValue(Base, Indexed, db.Model):
       return True
     # Otherwise it the CAV is not empty
     return False
+
+  @builder.simple_property
+  def etag(self):
+    """Return etag of the custom attribute value."""
+    return etag(self.updated_at, get_info(self))
 
   @builder.simple_property
   def preconditions_failed(self):
