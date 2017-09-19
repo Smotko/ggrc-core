@@ -347,6 +347,7 @@
       getCustomAttributes: getCustomAttributes,
       getCustomAttributeType: getCustomAttributeType,
       convertToFormViewField: convertToFormViewField,
+      updateCustomAttributeValue: updateCustomAttributeValue,
       applyChangesToCustomAttributeValue: applyChangesToCustomAttributeValue,
       CA_DD_REQUIRED_DEPS: CA_DD_REQUIRED_DEPS,
       ensureGlobalCA: ensureGlobalCA,

@@ -169,20 +169,18 @@
       },
       save: function (fieldId, fieldValue) {
         var self = this;
-        var changes = {};
-        changes[fieldId] = fieldValue;
-
+        var caValues = self.attr('instance.custom_attribute_values');
+        var val = _.find(caValues, function (item, key) {
+          return item.def.id === fieldId;
+        });
+        CAUtils.updateCustomAttributeValue(val, fieldValue);
+        val.attr('attributable_id', self.instance.id);
+        val.attr('attributable_type', 'Assessment');
+        val.attr('context', self.instance.context);
+        var valModel = new CMS.Models.CustomAttributeValue(val);
         this.attr('isDirty', true);
-
-        this.attr('deferredSave').push(function () {
-          var caValues = self.attr('instance.custom_attribute_values');
-          CAUtils.applyChangesToCustomAttributeValue(
-            caValues,
-            new can.Map(changes));
-
-          self.attr('saving', true);
-        })
-        .done(function () {
+        self.attr('saving', true);
+        valModel.save().done(function () {
           self.attr('formSavedDeferred').resolve();
           self.attr('error', false);
         })

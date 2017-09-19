@@ -156,6 +156,13 @@
   }, {
     init: function () {
       this._super.apply(this, arguments);
+      if (!this.selfLink) {
+        return;
+      }
+      GGRC.etags[this.selfLink] = [
+        this.etag,
+        this.updated_at.toGMTString(),
+      ];
     }
   });
 })(window.can, window.GGRC, window.CMS);

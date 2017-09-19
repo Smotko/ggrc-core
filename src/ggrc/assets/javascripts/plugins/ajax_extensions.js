@@ -16,7 +16,7 @@
 
   // Set up all PUT requests to the server to respect ETags, to ensure that
   // we are not overwriting more recent data than was viewed by the user.
-  var etags = {},
+  var etags = GGRC.etags = {},
     doc = root.document,
     body = doc.body,
     $win = $(root),
