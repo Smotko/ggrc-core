@@ -21,7 +21,7 @@ class Labeled(object):
 
   @declared_attr
   def label(cls):  # pylint: disable=no-self-argument
-    return deferred(db.Column(db.Enum(cls.POSSIBLE_LABELS),
+    return deferred(db.Column(db.Enum(*cls.POSSIBLE_LABELS),
                               nullable=True),
                     cls.__name__)
 
