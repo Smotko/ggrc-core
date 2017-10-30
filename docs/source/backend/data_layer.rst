@@ -12,6 +12,12 @@ classes themselves. Constraints used for validation and data integrity
 are described within the model classes as well.
 
 
+Database Schema
+^^^^^^^^^^^^^^^
+
+  .. figure:: /_static/res/schema.png
+     :alt: Database schema
+
 Internal vs. External Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
