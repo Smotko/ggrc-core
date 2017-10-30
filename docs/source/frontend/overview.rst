@@ -71,19 +71,85 @@ Widgets (tabs)
 
 Which widgets (or tabs) are shown on the object page is defined in
 ``business_objects.js``.
-This is where we state which controller should be used for each tab
-(InfoWidget/TreeView/ListView). TreeViews are used almost everywhere,
-except on the Admin Dashboard, where we are using ListViews. ListViews
-have pagination.
+This is where we state which controller or component should be used
+for each tab:
 
-Almost every TreeView controller instance has a ``parent_instance``
-variable that can be used to access the parent. You can't get the parent
-of an object without a TreeView, because an object can have multiple
-parents (think of it as a graph). Our TreeViews are trees inside this
-graph so that's why we can have parent instances in this context.
+-  ``InfoWidget Controller``, is used as first tab on the page and contain
+    context of one (content of object for objects related pages
+    (Program, Audit etc.) or active workflows statistics on My Work page)
+-  ``Summary Controller``,
+    is used on Audit page and shows statistics of status related Assessments.
+-  Tree view tabs use ``tree-widget-container`` in order for wrap
+    all inner logic of the tab (:ref:`tree-view-widget`).
+-  ``TreeView/ListView Controllers`` are used only on the Admin Dashboard page.
+    ListViews have pagination.
 
-Filtering a TreeView is done in the TreeFilter, which simply hides the
-elements from the DOM.
+.. _tree-view-widget:
+
+Tree view widget
+~~~~~~~~~~~~~~~~
+
+Tree view widget has a ``tree-widget-container`` as a wrapper,
+that has a two major parts:
+
+1) Filter
+    a) The filter input where you can enter an arbitrary filter(corresponding to the rules for :ref:`filter-expressions`) as a string
+    b) Multi-select dropdown with statuses
+    c) :ref:`advanced-search`
+
+2) Tree view grid
+    a) Tree view grid
+        ``tree-view`` component uses the :ref:`advanced-query-api` in order for
+        fetch data for grid.
+        The default query for first level of grid will looks like it:
+
+        ..  code:: json
+
+            {
+                "object_name": "<tab model name>",
+                "limit": "[0, 10]",
+                "filters": {"expression": {
+                    "object_name": "<page context model name>",
+                    "op": {"name":"relevant"},
+                    "ids": ["<id of context object>"]
+                    }
+                }
+            }
+    b) Pagination component (at the filter line and under the grid)
+    c) Tree item action components (edit, preview, map logic and etc.)
+    d) Sub-level of tree item
+        Sub-level of tree item has limitation in 20 items. If object has
+        more than 20 mapped object is shown link on this object in order to
+        look at all related objects.
+
+3) Info pane (preview of object)
+
+.. figure:: /_static/res/tree-widget.png
+
+.. _advanced-search:
+
+Advanced search
+~~~~~~~~~~~~~~~
+
+``Advanced Search`` feature in GGRC provides a user simple way to perform
+complicated search accross required data. The feature allows to search objects
+both by attributes and mappings.
+Search by attributes include possibility to find object by any attributes
+it has with “Contains”, “Equals”, “Does not contain”, “Is not equal”,
+“Lesser than”, “Greater than” attributes.
+Search by mappings allows to search objects by any level of mappings
+(for example, “I would like to find a Control that is mapped to Program A,
+where Program A is mapped to Regulation B and etc.). User is also able to
+construct complex group expression with “AND”, “OR” conditions
+(for example, “I would like to find a Control that is mapped to Program A
+AND that is mapped to Regulation B and etc.)
+``Advanced Search`` except tree view also integrated with Mapping and Global
+search modals (:ref:`mapping-and-global-search`)
+``Advanced Search`` UI generate a complex query to :ref:`advanced-query-api`
+in order to fetch data from server side.
+
+.. figure:: /_static/res/advanced-search.png
+
 
 QuickFormController
 ~~~~~~~~~~~~~~~~~~~
@@ -231,8 +297,13 @@ How/when are they validated?
 View
 ~~~~
 
-View templates are implemented all in JavaScript with the help of
-Mustache.
+View templates are implemented all in JavaScript with the help of Mustache.
+
+Components
+~~~~~~~~~~
+
+To build the UI are used components and are in the directory
+``assets/javascripts/components``
 
 Standard view templates
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -242,14 +313,6 @@ within GGRC. Additional fragments can be created and utilized as needed.
 But these templates are the main templates from which the majority of
 the UI is created.
 
--  ``tree.mustache`` - Defines the content of the trees for specified
-   object types. This template reflects Tier 1 and Tier 2 information
-   (Tier 2 being a more detailed set of information relevant to an
-   object).  Specified as the ``show_view`` option in each TreeView.
--  ``tree_footer.mustache`` - If present, defines the content of the
-   last row of a given tree.  Usually contains a “Add Object” or “+
-   Object” link which invokes a mapping or creation modal.  Specified as
-   the ``footer_view`` option in each TreeView.
 -  ``info.mustache`` - Defines the “Info” widget on each object’s page.
     Defined per-widget in GGRC.Controllers.InfoWidget as the
    ``widget_view`` option, and specified using ``GGRC.WidgetList``
@@ -414,9 +477,10 @@ primarily based on jQuery event handling.
 Program Flow
 ~~~~~~~~~~~~
 
-Most client-side logic is implemented in Controls. Much of this logic is
+Legacy part of client-side logic is implemented in Controls. Much of this logic is
 implemented using asynchronous callbacks via
 `can.Deferred <http://canjs.com/docs/can.Deferred.html>`_.
+All new features are written in component-based approach.
 
 Error Handling
 ~~~~~~~~~~~~~~
