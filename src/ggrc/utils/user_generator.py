@@ -96,6 +96,10 @@ def search_user(email):
 
 def find_or_create_external_user(email, name):
   """Find or generate user after verification"""
+
+  if settings.INTEGRATION_SERVICE_URL == 'mock':
+    return find_or_create_user_by_email(email, name)
+
   if settings.INTEGRATION_SERVICE_URL and search_user(email):
     return find_or_create_user_by_email(email, name)
   return None
@@ -107,6 +111,9 @@ def find_user(email):
   If Integration Server is specified not found in DB user is generated
   with Creator role.
   """
+  if settings.INTEGRATION_SERVICE_URL == 'mock':
+    return find_user_by_email(email)
+
   if settings.INTEGRATION_SERVICE_URL:
     name = search_user(email)
     if not name:
