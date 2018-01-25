@@ -14,6 +14,7 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import true
 
 from ggrc.models import all_models
+from ggrc.models.hooks.acl.cache import AccessControlListCache
 from ggrc.models.relationship import Stub, RelationshipsCache
 from ggrc.models.hooks.relationship import related
 
@@ -48,27 +49,6 @@ def _get_acr_id(acl):
   if acl.ac_role is not None:
     return acl.ac_role.id
   return None
-
-
-class AccessControlListCache(object):  # pylint: disable=R0903
-  """Access Control List helper"""
-  def __init__(self):
-    self.cache = set()
-
-  def add(self, obj, parent, person, role_id):
-    """Add new item if it wasn't already added"""
-    key = (obj.id, obj.type, person.id, role_id, parent.id)
-    if key in self.cache:
-      return
-    self.cache.add(key)
-    acl = all_models.AccessControlList(
-        object_id=obj.id,
-        object_type=obj.type,
-        parent=parent,
-        person=person,
-        ac_role_id=role_id)
-    if hasattr(obj, "access_control_list"):
-      obj.access_control_list.append(acl)
 
 
 class AuditRolesHandler(object):
