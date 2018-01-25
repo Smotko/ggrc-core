@@ -14,6 +14,7 @@ from ggrc.models import all_models
 import ggrc_basic_permissions as perms
 
 from integration.ggrc import TestCase
+from integration.ggrc.access_control import acl_helper
 from integration.ggrc.api_helper import Api
 from integration.ggrc.generator import ObjectGenerator
 from integration.ggrc.models import factories
@@ -108,20 +109,20 @@ class TestPermissionsOnAssessmentTemplate(TestCase):
   def setUp(self):
     super(TestPermissionsOnAssessmentTemplate, self).setUp()
     self.api = Api()
+    editor = all_models.AccessControlRole.query.filter(
+        all_models.AccessControlRole.name == "Program Editors"
+    ).one()
     self.generator = ObjectGenerator()
-    _, program = self.generator.generate_object(all_models.Program)
-    program_id = program.id
     _, self.editor = self.generator.generate_person(
         user_role="Creator"
     )
-    role = perms.all_models.Role.query.filter(
-        perms.all_models.Role.name == "ProgramEditor"
-    ).first()
-    self.generator.generate_user_role(
-        self.editor,
-        role,
-        all_models.Program.query.get(program_id)
-    )
+    _, program = self.generator.generate_object(all_models.Program, {
+        "access_control_list": [
+            acl_helper.get_acl_json(editor.id,
+                                    self.editor.id)
+        ]
+    })
+    program_id = program.id
     _, audit = self.generator.generate_object(
         all_models.Audit,
         {

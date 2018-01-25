@@ -74,7 +74,7 @@ class TestCreatorProgram(TestCase):
             }
         },
         "ProgramReader": {
-            "program_role": "ProgramReader",
+            "program_role": "Program Readers",
             "objects": {
                 "program": {
                     "get": 200,
@@ -94,8 +94,8 @@ class TestCreatorProgram(TestCase):
                 }
             }
         },
-        "ProgramOwner": {
-            "program_role": "ProgramOwner",
+        "ProgramManager": {
+            "program_role": "Program Managers",
             "objects": {
                 "program": {
                     "get": 200,
@@ -116,7 +116,7 @@ class TestCreatorProgram(TestCase):
             }
         },
         "ProgramEditor": {
-            "program_role": "ProgramEditor",
+            "program_role": "Program Editors",
             "objects": {
                 "program": {
                     "get": 200,
@@ -140,10 +140,10 @@ class TestCreatorProgram(TestCase):
 
   def init_roles(self):
     """ Create a delete request for the given object """
-    response = self.api.get_query(all_models.Role, "")
-    self.roles = {}
-    for role in response.json.get("roles_collection").get("roles"):
-      self.roles[role.get("name")] = role
+    ac_roles = all_models.AccessControlRole.query.all()
+    self.ac_roles = {}
+    for ac_role in ac_roles:
+      self.ac_roles[ac_role.name] = ac_role.id
 
   def init_users(self):
     """ Create users used by test cases """
@@ -153,11 +153,11 @@ class TestCreatorProgram(TestCase):
         ("mapped", "Creator"),
         ("ProgramReader", "Creator"),
         ("ProgramEditor", "Creator"),
-        ("ProgramOwner", "Creator")]
+        ("ProgramManager", "Creator")]
     self.people = {}
     for (name, role) in users:
       _, user = self.object_generator.generate_person(
-          data={"name": name}, user_role=role)
+          data={"name": name, "email": name + "@example.com"}, user_role=role)
       self.people[name] = user
 
   def delete(self, obj):
@@ -196,10 +196,20 @@ class TestCreatorProgram(TestCase):
     creator = self.people.get('creator')
     self.api.set_user(creator)
     random_title = factories.random_str()
+    person = self.people.get(test_case_name)
+    acl = [acl_helper.get_acl_json(self.ac_roles["Program Managers"],
+                                   creator.id)]
+    if "program_role" in test_case:
+      ac_role_id = self.ac_roles[test_case["program_role"]]
+      acl.append(acl_helper.get_acl_json(ac_role_id, person.id))
     response = self.api.post(all_models.Program, {
-        "program": {"title": random_title, "context": None},
+        "program": {
+            "title": random_title,
+            "context": None,
+            "access_control_list": acl
+        },
     })
-    self.assertEqual(response.status_code, 201)
+    self.assertEqual(response.status_code, 201, "Creator can't create program")
     context_id = response.json.get("program").get("context").get("id")
     program_id = response.json.get("program").get("id")
 
@@ -221,7 +231,8 @@ class TestCreatorProgram(TestCase):
                   acl_helper.get_acl_json(acr_id, creator.id)],
           },
       })
-      self.assertEqual(response.status_code, 201)
+      self.assertEqual(response.status_code, 201,
+                       "Creator can't create object")
       system_id = response.json.get("system").get("id")
       self.objects[obj] = all_models.System.query.get(system_id)
 
@@ -235,7 +246,8 @@ class TestCreatorProgram(TestCase):
             "type": "System"
         }, "context": None},
     })
-    self.assertEqual(response.status_code, 201)
+    self.assertEqual(response.status_code, 201,
+                     "Creator can't map object to program")
 
     # Map people to Program:
     if test_case_name != "notmapped":
@@ -254,26 +266,6 @@ class TestCreatorProgram(TestCase):
               "id": context_id,
               "href": "/api/contexts/{}".format(context_id)
           }}})
-
-    # Add roles to mapped users:
-    if "program_role" in test_case:
-      person = self.people.get(test_case_name)
-      role = self.roles[test_case["program_role"]]
-      response = self.api.post(all_models.UserRole, {"user_role": {
-          "person": {
-              "id": person.id,
-              "type": "Person",
-              "href": "/api/people/{}".format(person.id),
-          }, "role": {
-              "type": "Role",
-              "href": "/api/roles/{}".format(role["id"]),
-              "id": role["id"],
-          }, "context": {
-              "type": "Context",
-              "id": context_id,
-              "href": "/api/contexts/{}".format(context_id)
-          }}})
-      self.assertEqual(response.status_code, 201)
 
   def test_creator_program_roles(self):
     """ Test creator role with all program scoped roles """
