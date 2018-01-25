@@ -79,6 +79,14 @@ permissions = {
         },
     ],
     "create": [
+        {
+            "type": "Audit",
+            "condition": "is_allowed_based_on",
+            "terms": {
+                "property_name": "program",
+                "action": "update",
+            }
+        },
         "Workflow",
         {
             "type": "TaskGroup",
