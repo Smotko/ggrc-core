@@ -2535,4 +2535,26 @@ Example:
     }
     return options.inverse(options.contexts);
   });
+
+  Mustache.registerHelper('page_roles', function (person, options) {
+    const pageInstance = Mustache.resolve(GGRC.page_instance);
+    const roles = {};
+    can.each(GGRC.access_control_roles, (role) => {
+      roles[role.id] = role;
+    });
+
+    person = Mustache.resolve(person);
+
+    const allRoleNames = pageInstance.access_control_list.filter((acl) => {
+      return acl.person.id === person.id && acl.ac_role_id in roles;
+    }).map((acl) => {
+      return roles[acl.ac_role_id].name;
+    });
+
+    return options.fn({
+      'short': allRoleNames[0],
+      count: allRoleNames.length > 1 ? allRoleNames.length - 1 : 0,
+      'long': allRoleNames.join(', '),
+    });
+  });
 })(jQuery, can);

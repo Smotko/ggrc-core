@@ -21,48 +21,17 @@
   {{/case}}
   {{#case 'authorizations'}}
     <div class="role tree-title-area">
-    {{#if result}}
-      {{#with_program_roles_as result}}
-        {{#if roles.length}}
-          <div class="item-data">
-          <div class="tree-title-area">
-          <span class="role" title="{{#is roles.0.role.permission_summary 'Mapped'}}No Role{{else}}{{roles.0.role.permission_summary}}{{/is}}">
-          {{#if_equals roles.0.role.permission_summary 'Mapped'}}
-            <span class="no-role">
-              No Role
-            </span>
-          {{else}}
-            {{roles.0.role.permission_summary}}
-          {{/if_equals}}
-            {{#roles.1}}
-              {{#if_in_map roles 'role.permission_summary' 'Mapped'}}
-                {{^if_equals roles.length 2}}
-                  + {{sum roles.length '-2'}}
-                {{/if_equals}}
-              {{else}}
-                + {{sum roles.length '-1'}}
-              {{/if_in_map}}
-            {{/roles.1}}
-            </span>
-          </div>
-          </div>
-        {{/if}}
-      {{/with_program_roles_as}}
-    {{else}}
       <div class="item-data">
         <div class="tree-title-area">
-          {{#if_equals system_wide_role 'No Access'}}
-            <span class="no-role">
-              No Role
+          {{log instance}}
+          {{log page_instance}}
+          {{#page_roles instance}}
+            <span class="role" title="{{long}}">
+              {{short}} {{#count}} + {{count}}{{/count}}
             </span>
-          {{else}}
-            <span class="role">
-              {{system_wide_role}}
-            </span>
-          {{/if_equals}}
+          {{/page_roles}}
         </div>
       </div>
-    {{/if}}
     </div>
   {{/case}}
   {{#default}}
