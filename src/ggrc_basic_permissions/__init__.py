@@ -8,7 +8,6 @@ import itertools
 
 import sqlalchemy.orm
 from sqlalchemy import and_
-from sqlalchemy import case
 from sqlalchemy import literal
 from sqlalchemy import or_
 from sqlalchemy.orm import aliased
@@ -29,7 +28,6 @@ from ggrc.services import signals
 from ggrc.services.registry import service
 from ggrc.utils import benchmark
 from ggrc_basic_permissions import basic_roles
-from ggrc_basic_permissions.contributed_roles import lookup_role_implications
 from ggrc_basic_permissions.contributed_roles import BasicRoleDeclarations
 from ggrc_basic_permissions.contributed_roles import BasicRoleImplications
 from ggrc_basic_permissions.converters.handlers import COLUMN_HANDLERS
