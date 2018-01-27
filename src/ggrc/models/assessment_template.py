@@ -5,6 +5,7 @@
 """A module containing the implementation of the assessment template entity."""
 
 from sqlalchemy.orm import validates
+from werkzeug.exceptions import Forbidden
 
 from ggrc import db
 from ggrc.access_control.roleable import Roleable
@@ -20,6 +21,7 @@ from ggrc.models import reflection
 from ggrc.models.types import JsonType
 from ggrc.services import signals
 from ggrc.fulltext.mixin import Indexed
+from ggrc.rbac.permissions import permissions_for
 
 
 class AssessmentTemplate(assessment.AuditRelationship, relationship.Relatable,
@@ -237,7 +239,8 @@ class AssessmentTemplate(assessment.AuditRelationship, relationship.Relatable,
 def create_audit_relationship(audit_stub, obj):
   """Create audit to assessment template relationship"""
   parent_audit = audit.Audit.query.get(audit_stub["id"])
-
+  if not permissions_for()._is_allowed_for(parent_audit, "update"):
+    raise Forbidden()
   rel = relationship.Relationship(
       source=parent_audit,
       destination=obj,

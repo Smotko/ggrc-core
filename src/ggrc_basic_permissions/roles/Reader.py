@@ -87,6 +87,7 @@ permissions = {
                 "action": "update",
             }
         },
+        "AssessmentTemplate",
         "Workflow",
         {
             "type": "TaskGroup",

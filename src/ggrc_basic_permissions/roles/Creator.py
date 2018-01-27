@@ -84,6 +84,7 @@ permissions = {
                 "action": "update",
             }
         },
+        "AssessmentTemplate",
         {
             "type": "TaskGroup",
             "condition": "is_workflow_admin",
