@@ -128,9 +128,6 @@ class TestAuditRoleProgation(TestCase):
     super(TestAuditRoleProgation, self).setUp()
     self.audit_roles = {
         role.name: role for role in all_models.AccessControlRole.query.filter(
-            # Using like `Audit%` because all audit roles start with `Audit`
-            # e.g. Auditors, Audit Captains, Audit Captains Mapped
-            all_models.AccessControlRole.name.like("Audit%")
         ).all()
     }
     self.issue_roles = {
@@ -175,14 +172,18 @@ class TestAuditRoleProgation(TestCase):
                 "Snapshot": self.audit_roles['Auditors Snapshot Mapped'],
                 "Issue": self.audit_roles['Auditors Issue Mapped'],
             }),
+        self.audit_roles['Program Readers Mapped']: defaultdict(
+            lambda: self.audit_roles['Program Readers Mapped']),
+        self.audit_roles['Program Editors Mapped']: defaultdict(
+            lambda: self.audit_roles['Program Editors Mapped']),
+        self.audit_roles['Program Managers Mapped']: defaultdict(
+            lambda: self.audit_roles['Program Managers Mapped']),
     }
-
+    all_acls = all_models.AccessControlList.query.filter().all()
+    acl_map = {(acl.object_id, acl.object_type, acl.person): [
+               aacl.ac_role.name for aacl in all_acls]
+               for acl in all_acls}
     for acl in audit.access_control_list:
-      all_acls = all_models.AccessControlList.query.filter(
-          all_models.AccessControlList.parent_id == acl.id).all()
-      acl_map = {(acl.object_id, acl.object_type, acl.person): acl
-                 for acl in all_acls}
-
       self.assertNotEqual(
           len(all_acls), 0,
           "No propagated acls created for {}".format(acl.ac_role.name))
@@ -197,8 +198,8 @@ class TestAuditRoleProgation(TestCase):
       ]:
         key = (obj.id, obj.type, acl.person)
         self.assertIn(key, acl_map)
-        self.assertEqual(acl_map[key].ac_role.name,
-                         roles_type_map[acl.ac_role][obj.type].name)
+        self.assertIn(roles_type_map[acl.ac_role][obj.type].name,
+                      acl_map[key])
 
   def test_object_created(self):
     """Test if audit mapped roles are created for newly created objects"""
@@ -215,12 +216,18 @@ class TestAuditRoleProgation(TestCase):
                 "Snapshot": self.audit_roles['Auditors Snapshot Mapped'],
                 "Issue": self.audit_roles['Auditors Issue Mapped'],
             }),
+        self.audit_roles['Program Readers Mapped']: defaultdict(
+            lambda: self.audit_roles['Program Readers Mapped']),
+        self.audit_roles['Program Editors Mapped']: defaultdict(
+            lambda: self.audit_roles['Program Editors Mapped']),
+        self.audit_roles['Program Managers Mapped']: defaultdict(
+            lambda: self.audit_roles['Program Managers Mapped']),
     }
-
+    all_acls = all_models.AccessControlList.query.filter().all()
+    acl_map = {(acl.object_id, acl.object_type, acl.person): [
+               aacl.ac_role.name for aacl in all_acls]
+               for acl in all_acls}
     for acl in audit.access_control_list:
-      all_acls = all_models.AccessControlList.query.all()
-      acl_map = {(acl.object_id, acl.object_type, acl.person): acl
-                 for acl in all_acls}
 
       self.assertNotEqual(
           len(all_acls), 0,
@@ -236,8 +243,8 @@ class TestAuditRoleProgation(TestCase):
       ]:
         key = (obj.id, obj.type, acl.person)
         self.assertIn(key, acl_map)
-        self.assertEqual(acl_map[key].ac_role.name,
-                         roles_type_map[acl.ac_role][obj.type].name)
+        self.assertIn(roles_type_map[acl.ac_role][obj.type].name,
+                      acl_map[key])
 
   def test_acl_propagation_on_unmap(self):
     """Test if acls are deleted correctly when the object is unmapped"""

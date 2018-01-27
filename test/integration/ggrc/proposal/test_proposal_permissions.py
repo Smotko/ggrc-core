@@ -23,6 +23,7 @@ class TestPermissions(TestCase):
     super(TestPermissions, self).setUp()
     self.api = Api()
     roles = {r.name: r for r in all_models.Role.query.all()}
+    ac_roles = {r.name: r for r in all_models.AccessControlRole.query.all()}
     with factories.single_commit():
       self.control = factories.ControlFactory()
       acrs = {
@@ -48,19 +49,22 @@ class TestPermissions(TestCase):
           "Administrator": factories.PersonFactory(),
           "ACL_Reader": factories.PersonFactory(),
           "ACL_Editor": factories.PersonFactory(),
-          "ProgramEditor": factories.PersonFactory(),
-          "ProgramOwner": factories.PersonFactory(),
-          "ProgramReader": factories.PersonFactory(),
+          "Program Editors": factories.PersonFactory(),
+          "Program Managers": factories.PersonFactory(),
+          "Program Readers": factories.PersonFactory(),
       }
       for role_name in ["Creator", "Reader", "Editor", "Administrator"]:
         rbac_factories.UserRoleFactory(role=roles[role_name],
                                        person=self.people[role_name])
-      for role_name in ["ProgramEditor", "ProgramOwner", "ProgramReader"]:
+      for role_name in ["Program Editors",
+                        "Program Managers",
+                        "Program Readers"]:
         person = self.people[role_name]
         rbac_factories.UserRoleFactory(role=roles["Creator"], person=person)
-        rbac_factories.UserRoleFactory(role=roles[role_name],
-                                       person=person,
-                                       context=self.program.context)
+        factories.AccessControlListFactory(
+            ac_role=ac_roles[role_name],
+            object=self.program,
+            person=self.people[role_name])
       self.proposal = factories.ProposalFactory(
           instance=self.control,
           content={
@@ -87,9 +91,9 @@ class TestPermissions(TestCase):
       ("ACL_Reader", 200),
       ("ACL_Editor", 200),
       ("Administrator", 200),
-      ("ProgramEditor", 200),
-      ("ProgramOwner", 200),
-      ("ProgramReader", 200),
+      ("Program Editors", 200),
+      ("Program Managers", 200),
+      ("Program Readers", 200),
   )
   @ddt.unpack
   def test_permissions_on_get(self, role_name, status):
@@ -111,9 +115,9 @@ class TestPermissions(TestCase):
       ("Administrator", 200),
       ("ACL_Reader", 403),
       ("ACL_Editor", 200),
-      ("ProgramEditor", 200),
-      ("ProgramOwner", 200),
-      ("ProgramReader", 403)
+      ("Program Editors", 200),
+      ("Program Managers", 200),
+      ("Program Readers", 403)
   )
   @ddt.unpack
   def test_permissions_on_apply(self, role_name, status):
@@ -132,9 +136,9 @@ class TestPermissions(TestCase):
       ("ACL_Reader", 403),
       ("ACL_Editor", 200),
       ("Administrator", 200),
-      ("ProgramEditor", 200),
-      ("ProgramOwner", 200),
-      ("ProgramReader", 403),
+      ("Program Editors", 200),
+      ("Program Managers", 200),
+      ("Program Readers", 403),
   )
   @ddt.unpack
   def test_permissions_on_decline(self, role_name, status):
@@ -153,9 +157,9 @@ class TestPermissions(TestCase):
       ("ACL_Reader", 201),
       ("ACL_Editor", 201),
       ("Administrator", 201),
-      ("ProgramEditor", 201),
-      ("ProgramOwner", 201),
-      ("ProgramReader", 201),
+      ("Program Editors", 201),
+      ("Program Managers", 201),
+      ("Program Readers", 201),
   )
   @ddt.unpack
   def test_permissions_on_create(self, role_name, status):

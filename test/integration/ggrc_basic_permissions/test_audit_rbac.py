@@ -11,7 +11,6 @@ from os.path import join
 from collections import defaultdict
 
 from ggrc.models import all_models
-import ggrc_basic_permissions as perms
 
 from integration.ggrc import TestCase
 from integration.ggrc.access_control import acl_helper

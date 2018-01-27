@@ -30,6 +30,7 @@ class TestRevisionHistory(TestCase):
     super(TestRevisionHistory, self).setUp()
     self.api = Api()
     roles = {r.name: r for r in all_models.Role.query.all()}
+    ac_roles = {r.name: r for r in all_models.AccessControlRole.query.all()}
     with factories.single_commit():
       self.control = factories.ControlFactory()
       acrs = {
@@ -55,19 +56,22 @@ class TestRevisionHistory(TestCase):
           "Administrator": factories.PersonFactory(),
           "ACL_Reader": factories.PersonFactory(),
           "ACL_Editor": factories.PersonFactory(),
-          "ProgramEditor": factories.PersonFactory(),
-          "ProgramOwner": factories.PersonFactory(),
-          "ProgramReader": factories.PersonFactory(),
+          "Program Editors": factories.PersonFactory(),
+          "Program Managers": factories.PersonFactory(),
+          "Program Readers": factories.PersonFactory(),
       }
       for role_name in ["Creator", "Reader", "Editor", "Administrator"]:
         rbac_factories.UserRoleFactory(role=roles[role_name],
                                        person=self.people[role_name])
-      for role_name in ["ProgramEditor", "ProgramOwner", "ProgramReader"]:
+      for role_name in ["Program Editors",
+                        "Program Managers",
+                        "Program Readers"]:
         person = self.people[role_name]
         rbac_factories.UserRoleFactory(role=roles["Creator"], person=person)
-        rbac_factories.UserRoleFactory(role=roles[role_name],
-                                       person=person,
-                                       context=self.program.context)
+        factories.AccessControlListFactory(
+            ac_role=ac_roles[role_name],
+            object=self.program,
+            person=self.people[role_name])
     with factories.single_commit():
       for role_name in ["ACL_Reader", "ACL_Editor"]:
         rbac_factories.UserRoleFactory(role=roles["Creator"],
@@ -84,9 +88,9 @@ class TestRevisionHistory(TestCase):
       ("ACL_Reader", False),
       ("ACL_Editor", False),
       ("Administrator", False),
-      ("ProgramEditor", False),
-      ("ProgramOwner", False),
-      ("ProgramReader", False),
+      ("Program Editors", False),
+      ("Program Managers", False),
+      ("Program Readers", False),
   )
   @ddt.unpack
   def test_get(self, role_name, empty):

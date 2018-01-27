@@ -425,12 +425,18 @@ class TestAdvancedQueryAPI(WithQueryApi, TestCase):
     )
     person_id_name = {person["id"]: (person["name"], person["email"])
                       for person in people}
+    owner_role = all_models.AccessControlRole.query.filter(
+        all_models.AccessControlRole.name == "Admin",
+        all_models.AccessControlRole.object_type == "Policy"
+    ).one()
     policy_id_owner = {
         policy["id"]: person_id_name[
-            policy["access_control_list"][0]["person_id"]
+            [acl for acl in policy["access_control_list"]
+             if acl["ac_role_id"] == owner_role.id][0]["person_id"]
         ]
         for policy in policies_unsorted
     }
+
     expected = sorted(sorted(policies_unsorted, key=itemgetter("id")),
                       key=lambda p: policy_id_owner[p["id"]])
 
