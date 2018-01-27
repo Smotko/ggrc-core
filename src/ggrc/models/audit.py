@@ -4,13 +4,16 @@
 """Audit model."""
 
 from sqlalchemy import orm
+from werkzeug.exceptions import Forbidden
 
 from ggrc import db
 from ggrc.access_control.list import AccessControlList
 from ggrc.access_control.roleable import Roleable
 from ggrc.builder import simple_property
+from ggrc.login import get_current_user
 from ggrc.models.deferred import deferred
 from ggrc.models import mixins
+from ggrc.rbac import SystemWideRoles
 
 from ggrc.fulltext.mixin import Indexed
 from ggrc.models import issuetracker_issue
@@ -204,6 +207,19 @@ class Audit(Snapshotable,
 
       for obj in related_children:
         obj.clone(self)
+
+  @orm.validates("archived")
+  def archived_check(self, key, value):
+    user = get_current_user()
+    if getattr(user, 'system_wide_role', None) in SystemWideRoles.admins:
+      return value
+
+    if self.archived is not None and self.archived != value and \
+       not any(acl for acl in self.access_control_list
+               if acl.ac_role.name == "Program Managers Mapped" and
+               acl.person.id == user.id):
+      raise Forbidden()
+    return value
 
   @classmethod
   def _filter_by_program(cls, predicate):
