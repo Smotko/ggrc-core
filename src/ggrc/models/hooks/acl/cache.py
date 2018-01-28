@@ -11,9 +11,9 @@ class AccessControlListCache(object):  # pylint: disable=R0903
   def __init__(self):
     self.cache = {}
 
-  def add(self, obj, parent, person, role_id):
+  def add(self, obj, parent, person, role):
     """Add new item if it wasn't already added"""
-    key = (obj.id, obj.type, person.id, role_id, parent.id)
+    key = (obj.id, obj.type, person.id, role, parent.id)
     if key in self.cache:
       return self.cache[key]
     acl = all_models.AccessControlList(
@@ -21,7 +21,7 @@ class AccessControlListCache(object):  # pylint: disable=R0903
         object_type=obj.type,
         parent=parent,
         person=person,
-        ac_role_id=role_id)
+        ac_role=role)
     self.cache[key] = acl
     if hasattr(obj, "access_control_list"):
       obj.access_control_list.append(acl)

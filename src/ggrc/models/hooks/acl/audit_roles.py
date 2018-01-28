@@ -33,22 +33,13 @@ def _get_cache(expr, name):
 def _get_acl_audit_roles():
   """Cache captain and auditor roles"""
   return _get_cache(lambda: {
-      role.name: role.id for role in
+      role.name: role for role in
       all_models.AccessControlRole.query.filter(
           # We only load system roles and skip the ones created by users
           all_models.AccessControlRole.non_editable == true()
       ).options(
           load_only("id", "name")).all()
   }, "acl_audit_roles")
-
-
-def _get_acr_id(acl):
-  """Get acr id from acl object"""
-  if acl.ac_role_id is not None:
-    return acl.ac_role_id
-  if acl.ac_role is not None:
-    return acl.ac_role.id
-  return None
 
 
 class AuditRolesHandler(object):
@@ -128,8 +119,8 @@ class AuditRolesHandler(object):
         audit_roles["Audit Captains"]: self._audit_captains_handler,
         audit_roles["Auditors"]: self._auditors_handler,
     }
-    if obj.ac_role_id in role_handlers:
-      role_handlers[obj.ac_role_id](obj, audit_roles)
+    if obj.ac_role in role_handlers:
+      role_handlers[obj.ac_role](obj, audit_roles)
 
   def handle_snapshot(self, obj):
     """Handle snapshot creation"""
@@ -140,10 +131,10 @@ class AuditRolesHandler(object):
         audit_roles["Audit Captains"]: audit_roles["Audit Captains Mapped"]
     }
     for acl in access_control_list:
-      if acl.ac_role.id not in role_map:
+      if acl.ac_role not in role_map:
         continue
       acl_cache = self.caches["access_control_list_cache"]
-      acl_cache.add(obj, acl, acl.person, role_map[acl.ac_role.id])
+      acl_cache.add(obj, acl, acl.person, role_map[acl.ac_role])
 
   def handle_relationship(self, obj):
     """Handle relationship creation"""
@@ -194,12 +185,12 @@ class AuditRolesHandler(object):
         audit_roles["Auditors Issue Mapped"]: auditors_mapped_dict,
     }
     for acl in access_control_list:
-      ac_role_id = _get_acr_id(acl)
-      if ac_role_id not in role_map:
+      ac_role = acl.ac_role
+      if ac_role not in role_map:
         continue
       acl_cache = self.caches["access_control_list_cache"]
       acl_cache.add(other, acl, acl.person,
-                    role_map[ac_role_id][type(other)])
+                    role_map[ac_role][type(other)])
 
   def after_flush(self, session, _):
     """Handle legacy audit captain -> program editor role propagation"""

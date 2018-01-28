@@ -14,15 +14,6 @@ from ggrc.models.relationship import Stub, RelationshipsCache
 from ggrc.models.hooks.relationship import related
 
 
-def _get_acr_id(acl):
-  """Get acr id from acl object"""
-  if acl.ac_role_id is not None:
-    return acl.ac_role_id
-  if acl.ac_role is not None:
-    return acl.ac_role.id
-  return None
-
-
 def related_to(rel, types):
   """Relate help"""
   source, destination = rel.source, rel.destination
@@ -38,9 +29,9 @@ def _get_program_roles():
   roles = all_models.AccessControlRole.query.filter().options(
       load_only("id", "name")).all()
   res = {
-      role.name: role.id for role in roles
+      role.name: role for role in roles
   }
-  res.update({role.id: role.name for role in roles})
+  res.update({role: role.name for role in roles})
   return res
 
 
@@ -56,13 +47,7 @@ class ProgramRolesHandler(object):
     acl_cache = self.caches["access_control_list_cache"]
     for snapshot in acl.object.snapshotted_objects:
       acl_cache.add(
-          snapshot, acl, acl.person, acl.ac_role_id)
-
-  def _get_acr_name(self, acl):
-    """Hello"""
-    role_map = self.caches["program_roles"]
-    id_ = _get_acr_id(acl)
-    return role_map[id_]
+          snapshot, acl, acl.person, acl.ac_role)
 
   def handle_audits(self, propagation, acl):
     """Handle audit propagation"""
@@ -70,7 +55,7 @@ class ProgramRolesHandler(object):
     acl_cache = self.caches["access_control_list_cache"]
     for audit in acl.object.audits:
       child = acl_cache.add(audit, acl, acl.person,
-                            role_map[self._get_acr_name(acl) + " Mapped"])
+                            role_map[acl.ac_role.name + " Mapped"])
       if "propagate" in propagation:
         self.handle_propagation(propagation["propagate"], child)
 
@@ -86,20 +71,20 @@ class ProgramRolesHandler(object):
               stub.type in propagation["type"].split(",")):
         continue
       if propagation["new_role"] == "same":
-        role_id = _get_acr_id(acl)
+        role = acl.ac_role
       elif propagation["new_role"] == "add mapped":
-        role_id = role_map[self._get_acr_name(acl) + " Mapped"]
+        role = role_map[acl.ac_role.name + " Mapped"]
       else:
         raise Exception("Wrong value for new_role field " +
                         propagation["new_role"])
       child = acl_cache.add(
-          stub, acl, acl.person, role_id)
+          stub, acl, acl.person, role)
       if "propagate" in propagation:
         self.handle_propagation(propagation["propagate"], child)
 
   def handle_propagation(self, propagation, acl):
     """Handle propagation dict"""
-    name = self._get_acr_name(acl)
+    name = acl.ac_role.name
     if name not in propagation["roles"]:
       return
     if "relationships" in propagation:
@@ -186,7 +171,7 @@ class ProgramRolesHandler(object):
       }:
         continue
       acl_cache = self.caches["access_control_list_cache"]
-      acl_cache.add(obj, acl, acl.person, acl.ac_role.id)
+      acl_cache.add(obj, acl, acl.person, acl.ac_role)
 
   def handle_crelationships(self, obj):
     """Handle relationships"""
@@ -195,7 +180,7 @@ class ProgramRolesHandler(object):
     program, other = related_to(obj, "Program")
     if program:
       for acl in program.access_control_list:
-        role_name = self._get_acr_name(acl)
+        role_name = acl.ac_role.name
         if role_name not in {
             "Program Readers",
             "Program Editors",
@@ -211,13 +196,13 @@ class ProgramRolesHandler(object):
         "Comment"})
     if comment_or_document:
       for acl in other.access_control_list:
-        if self._get_acr_name(acl) not in {
+        if acl.ac_role.name not in {
             "Program Readers Mapped",
             "Program Editors Mapped",
             "Program Managers Mapped"
         }:
           continue
-        acl_cache.add(comment_or_document, acl, acl.person, _get_acr_id(acl))
+        acl_cache.add(comment_or_document, acl, acl.person, acl.ac_role)
       return
 
     assessment_or_issue, other = related_to(obj, {
@@ -226,13 +211,13 @@ class ProgramRolesHandler(object):
         "AssessmentTemplate"})
     if assessment_or_issue:
       for acl in other.access_control_list:
-        if self._get_acr_name(acl) not in {
+        if acl.ac_role.name not in {
             "Program Readers Mapped",
             "Program Editors Mapped",
             "Program Managers Mapped"
         }:
           continue
-        acl_cache.add(assessment_or_issue, acl, acl.person, _get_acr_id(acl))
+        acl_cache.add(assessment_or_issue, acl, acl.person, acl.ac_role)
       return
 
   def handle_audit_creation(self, obj):
@@ -240,7 +225,7 @@ class ProgramRolesHandler(object):
     acl_cache = self.caches["access_control_list_cache"]
     role_map = self.caches["program_roles"]
     for acl in obj.program.access_control_list:
-      role_name = self._get_acr_name(acl)
+      role_name = acl.ac_role.name
       if role_name not in {
           "Program Readers",
           "Program Editors",
