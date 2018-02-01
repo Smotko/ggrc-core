@@ -129,3 +129,51 @@ class TestCAD(TestCase):
           property=u"\u5555" * 240 + u"2",
       ))
       db.session.commit()
+
+  def test_index_acl(self):
+    """Test filter by acl internal or not."""
+    title_1 = "title_1"
+    title_2 = "title_2"
+    with factories.single_commit():
+      searchable_person = factories.PersonFactory()
+      non_searchable_person = factories.PersonFactory()
+      control = factories.ControlFactory()
+      searchable_acr = factories.AccessControlRoleFactory(
+          name=title_1,
+          internal=False,
+          object_type="Control",
+      )
+      non_searchable_acr = factories.AccessControlRoleFactory(
+          name=title_2,
+          internal=True,
+          object_type="Control",
+      )
+      factories.AccessControlListFactory(ac_role=searchable_acr,
+                                         object=control,
+                                         person=searchable_person)
+      factories.AccessControlListFactory(ac_role=non_searchable_acr,
+                                         object=control,
+                                         person=non_searchable_person)
+    searchable_contents = [
+        (i.content, i.subproperty)
+        for i in mysql.MysqlRecordProperty.query.filter(
+            mysql.MysqlRecordProperty.property == searchable_acr.name,
+            mysql.MysqlRecordProperty.type == control.type,
+            mysql.MysqlRecordProperty.key == control.id,
+        )
+    ]
+    non_searchable_contents = [
+        (i.content, i.subproperty)
+        for i in mysql.MysqlRecordProperty.query.filter(
+            mysql.MysqlRecordProperty.property == non_searchable_acr.name,
+            mysql.MysqlRecordProperty.type == control.type,
+            mysql.MysqlRecordProperty.key == control.id,
+        )
+    ]
+    self.assertEqual([], non_searchable_contents)
+    self.assertEqual(
+        sorted([
+            (searchable_person.email, "{}-email".format(searchable_person.id)),
+            (searchable_person.email, "__sort__"),
+        ]),
+        sorted(searchable_contents))
