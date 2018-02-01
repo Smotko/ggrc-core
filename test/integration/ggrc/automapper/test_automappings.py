@@ -5,6 +5,7 @@
 
 import itertools
 from contextlib import contextmanager
+from sqlalchemy.orm import load_only
 
 import ggrc
 from ggrc import automapper
@@ -329,6 +330,70 @@ class TestAutomappings(TestCase):
                  (section, regulation),
                  (control, section)],
     )
+
+  def test_program_role_propagation(self):
+    """Test if automappings also propagate program roles"""
+    roles = {
+        "Program Managers",
+        "Program Editors",
+        "Program Readers"
+    }
+    propagated_roles = {
+        "Program Managers Mapped",
+        "Program Editors Mapped",
+        "Program Readers Mapped"
+    }
+    users = {}
+    for role in roles:
+      _, users[role] = self.gen.generate_person(user_role="Creator")
+
+    db_roles = all_models.AccessControlRole.query.filter(
+        all_models.AccessControlRole.name.in_(roles | propagated_roles)
+    ).options(
+        load_only("id", "name")).all()
+
+    role_map = {
+        role.name: role.id for role in db_roles
+    }
+
+    program = self.create_object(models.Program, {
+        'title': make_name('Program'),
+        'access_control_list': [{
+            "ac_role_id": role_map[role],
+            "person": {
+                "id": users[role].id,
+                "type": "Person"
+            }
+        } for role in roles]
+    })
+    regulation = self.create_object(models.Regulation, {
+        'title': make_name('Regulation'),
+    })
+    # Section is automapped to the program through destination
+    destination_obj = self.create_object(models.Section, {
+        'title': make_name('Section'),
+    })
+    # Objective is automapped to the program through source
+    source_obj = self.create_object(models.Objective, {
+        'title': make_name('Objective'),
+    })
+    self.assert_mapping_implication(
+        to_create=[
+            (program, regulation),
+            (source_obj, regulation),
+            (regulation, destination_obj)
+        ],
+        implied=[(program, source_obj), (program, destination_obj)]
+    )
+    for obj in (source_obj, destination_obj):
+      acls = all_models.AccessControlList.query.filter(
+          all_models.AccessControlList.object_id == obj.id,
+          all_models.AccessControlList.object_type == obj.type,
+          all_models.AccessControlList.ac_role_id.in_([
+              role_map[role] for role in propagated_roles])).all()
+      self.assertEqual(len(acls), 3)
+      self.assertItemsEqual(propagated_roles, [
+          acl.ac_role.name for acl in acls])
 
   def test_automapping_deletion(self):
     """Test if automapping data is preserved even when the parent relationship
