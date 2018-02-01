@@ -175,6 +175,9 @@ class CustomRoleAttr(FullTextAttr):
         # properly check for the internal property on the role once GGRC-3784
         # is done.
         continue
+      if acl.ac_role.internal:
+        # Don't index internal roles they are not presented to user.
+        continue
       ac_role = acl.ac_role.name
       person_id = acl.person.id
       if not results.get(acl.ac_role.name, None):
