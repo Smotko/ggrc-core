@@ -1,7 +1,7 @@
 # Copyright (C) 2018 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
-"""Test automappings"""
+"""Test automappings rbac"""
 
 import ddt
 
@@ -13,7 +13,7 @@ from integration.ggrc.access_control import acl_helper
 
 @ddt.ddt
 class TestAutomappings(TestCase):
-  """Test automappings"""
+  """Test automappings rbac"""
 
   def setUp(self):
     super(TestAutomappings, self).setUp()

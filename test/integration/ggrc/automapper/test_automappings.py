@@ -3,19 +3,13 @@
 
 """Test automappings"""
 
-import itertools
 from contextlib import contextmanager
-from sqlalchemy.orm import load_only
 
 import ggrc
-from ggrc import automapper
 from ggrc import models
-from ggrc.models import all_models
 from ggrc.models import Automapping
-from integration.ggrc import TestCase
-from integration.ggrc import generator
-from integration.ggrc.models import factories
 from integration.ggrc.models.factories import random_str
+from integration.ggrc.automapper.automappings_base import AutomappingsBase
 
 
 def make_name(msg):
@@ -32,94 +26,8 @@ def automapping_count_limit(new_limit):
   ggrc.automapper.AutomapperGenerator.COUNT_LIMIT = original_limit
 
 
-class TestAutomappings(TestCase):
+class TestAutomappings(AutomappingsBase):
   """Test automappings"""
-  def setUp(self):
-    super(TestAutomappings, self).setUp()
-    self.gen = generator.ObjectGenerator()
-    self.api = self.gen.api
-
-  @classmethod
-  def create_ac_roles(cls, obj, person_id):
-    """Create access control roles"""
-    ac_role = models.AccessControlRole.query.filter_by(
-        object_type=obj.type,
-        name="Admin"
-    ).first()
-    factories.AccessControlListFactory(
-        ac_role=ac_role,
-        object=obj,
-        person_id=person_id
-    )
-
-  def create_object(self, cls, data):
-    """Helper function for creating an object"""
-    name = cls._inflector.table_singular
-    data['context'] = None
-    res, obj = self.gen.generate(cls, name, {name: data})
-    self.assertIsNotNone(obj, '%s, %s: %s' % (name, str(data), str(res)))
-    return obj
-
-  def create_mapping(self, src, dst):
-    """Helper function for creating mappings"""
-    return self.gen.generate_relationship(src, dst)[1]
-
-  def assert_mapping(self, obj1, obj2, missing=False):
-    """Helper function for asserting mappings"""
-    ggrc.db.session.flush()
-    rel = models.Relationship.find_related(obj1, obj2)
-    if not missing:
-      self.assertIsNotNone(rel,
-                           msg='%s not mapped to %s' % (obj1.type, obj2.type))
-      revisions = models.Revision.query.filter_by(
-          resource_type='Relationship',
-          resource_id=rel.id,
-      ).count()
-      self.assertEqual(revisions, 1)
-    else:
-      self.assertIsNone(rel,
-                        msg='%s mapped to %s' % (obj1.type, obj2.type))
-
-  def assert_mapping_implication(self, to_create, implied, relevant=None):
-    """Helper function for asserting mapping implication"""
-    if relevant is None:
-      relevant = set()
-    objects = set()
-    for obj in relevant:
-      objects.add(obj)
-    mappings = set()
-    if not isinstance(to_create, list):
-      to_create = [to_create]
-    for src, dst in to_create:
-      objects.add(src)
-      objects.add(dst)
-      self.create_mapping(src, dst)
-      mappings.add(automapper.AutomapperGenerator.order(src, dst))
-    if not isinstance(implied, list):
-      implied = [implied]
-    for src, dst in implied:
-      objects.add(src)
-      objects.add(dst)
-      self.assert_mapping(src, dst)
-      mappings.add(automapper.AutomapperGenerator.order(src, dst))
-    possible = set()
-    for src, dst in itertools.product(objects, objects):
-      possible.add(automapper.AutomapperGenerator.order(src, dst))
-    for src, dst in possible - mappings:
-      self.assert_mapping(src, dst, missing=True)
-
-  def with_permutations(self, mk1, mk2, mk3):
-    """Helper function for creating permutations"""
-    obj1, obj2, obj3 = mk1(), mk2(), mk3()
-    self.assert_mapping_implication(
-        to_create=[(obj1, obj2), (obj2, obj3)],
-        implied=(obj1, obj3),
-    )
-    obj1, obj2, obj3 = mk1(), mk2(), mk3()
-    self.assert_mapping_implication(
-        to_create=[(obj2, obj3), (obj1, obj2)],
-        implied=(obj1, obj3),
-    )
 
   def test_directive_program_mapping(self):
     """Test mapping directive to a program"""
@@ -331,70 +239,6 @@ class TestAutomappings(TestCase):
                  (control, section)],
     )
 
-  def test_program_role_propagation(self):
-    """Test if automappings also propagate program roles"""
-    roles = {
-        "Program Managers",
-        "Program Editors",
-        "Program Readers"
-    }
-    propagated_roles = {
-        "Program Managers Mapped",
-        "Program Editors Mapped",
-        "Program Readers Mapped"
-    }
-    users = {}
-    for role in roles:
-      _, users[role] = self.gen.generate_person(user_role="Creator")
-
-    db_roles = all_models.AccessControlRole.query.filter(
-        all_models.AccessControlRole.name.in_(roles | propagated_roles)
-    ).options(
-        load_only("id", "name")).all()
-
-    role_map = {
-        role.name: role.id for role in db_roles
-    }
-
-    program = self.create_object(models.Program, {
-        'title': make_name('Program'),
-        'access_control_list': [{
-            "ac_role_id": role_map[role],
-            "person": {
-                "id": users[role].id,
-                "type": "Person"
-            }
-        } for role in roles]
-    })
-    regulation = self.create_object(models.Regulation, {
-        'title': make_name('Regulation'),
-    })
-    # Section is automapped to the program through destination
-    destination_obj = self.create_object(models.Section, {
-        'title': make_name('Section'),
-    })
-    # Objective is automapped to the program through source
-    source_obj = self.create_object(models.Objective, {
-        'title': make_name('Objective'),
-    })
-    self.assert_mapping_implication(
-        to_create=[
-            (program, regulation),
-            (source_obj, regulation),
-            (regulation, destination_obj)
-        ],
-        implied=[(program, source_obj), (program, destination_obj)]
-    )
-    for obj in (source_obj, destination_obj):
-      acls = all_models.AccessControlList.query.filter(
-          all_models.AccessControlList.object_id == obj.id,
-          all_models.AccessControlList.object_type == obj.type,
-          all_models.AccessControlList.ac_role_id.in_([
-              role_map[role] for role in propagated_roles])).all()
-      self.assertEqual(len(acls), 3)
-      self.assertItemsEqual(propagated_roles, [
-          acl.ac_role.name for acl in acls])
-
   def test_automapping_deletion(self):
     """Test if automapping data is preserved even when the parent relationship
        is deleted.
@@ -443,103 +287,3 @@ class TestAutomappings(TestCase):
     assert rel2.id == rel2_after_delete.id
     # Parent id should now be None
     assert rel2_after_delete.parent_id is None
-
-
-class TestIssueAutomappings(TestCase):
-  """Test suite for Issue-related automappings."""
-  # pylint: disable=invalid-name
-
-  def setUp(self):
-    super(TestIssueAutomappings, self).setUp()
-
-    # TODO: replace this hack with a special test util
-    from ggrc.login import noop
-    noop.login()  # this is needed to pass the permission checks in automapper
-
-    snapshottable = factories.ControlFactory()
-    with factories.single_commit():
-      self.audit, self.asmt, self.snapshot = self._make_audit_asmt_snapshot(
-          snapshottable,
-      )
-
-      self.issue = factories.IssueFactory()
-      self.issue_audit = factories.IssueFactory()
-      self.issue_snapshot = factories.IssueFactory()
-
-      factories.RelationshipFactory(source=self.issue_audit,
-                                    destination=self.audit)
-
-      # to map an Issue to a Snapshot, you first should map it to Audit
-      factories.RelationshipFactory(source=self.issue_snapshot,
-                                    destination=self.audit)
-      factories.RelationshipFactory(source=self.issue_snapshot,
-                                    destination=self.snapshot)
-
-  @staticmethod
-  def _make_audit_asmt_snapshot(snapshottable):
-    """Make Audit, Assessment, Snapshot and map them correctly."""
-    audit = factories.AuditFactory()
-    assessment = factories.AssessmentFactory(audit=audit)
-
-    revision = all_models.Revision.query.filter(
-        all_models.Revision.resource_id == snapshottable.id,
-        all_models.Revision.resource_type == snapshottable.type,
-    ).first()
-    snapshot = factories.SnapshotFactory(
-        parent=audit,
-        revision_id=revision.id,
-        child_type=snapshottable.type,
-        child_id=snapshottable.id,
-    )
-
-    # Audit-Assessment Relationship is created only on Assessment POST
-    factories.RelationshipFactory(source=audit, destination=assessment)
-    factories.RelationshipFactory(source=assessment, destination=snapshot)
-
-    return audit, assessment, snapshot
-
-  @staticmethod
-  def _ordered_pairs_from_relationships(relationships):
-    """Make list of ordered src, dst from a list of Relationship objects."""
-    def order(src, dst):
-      return ((src, dst) if (src.type, src.id) < (dst.type, dst.id) else
-              (dst, src))
-
-    return [order(r.source, r.destination) for r in relationships]
-
-  @classmethod
-  def _get_automapped_relationships(cls):
-    """Get list of ordered src, dst mapped by the only automapping."""
-    automapping = all_models.Automapping.query.one()
-    automapped = all_models.Relationship.query.filter(
-        all_models.Relationship.automapping_id == automapping.id,
-    ).all()
-    return cls._ordered_pairs_from_relationships(automapped)
-
-  def test_issue_assessment_automapping(self):
-    """Issue is automapped to Audit and Snapshot."""
-    factories.RelationshipFactory(source=self.issue,
-                                  destination=self.asmt)
-
-    automapped = self._get_automapped_relationships()
-
-    self.assertItemsEqual(automapped,
-                          [(self.audit, self.issue),
-                           (self.issue, self.snapshot)])
-
-  def test_issue_assessment_automapping_no_audit(self):
-    """Issue is automapped to Snapshot if Audit already mapped."""
-    factories.RelationshipFactory(source=self.issue_audit,
-                                  destination=self.asmt)
-
-    automapped = self._get_automapped_relationships()
-
-    self.assertItemsEqual(automapped,
-                          [(self.issue_audit, self.snapshot)])
-
-  def test_issue_assessment_automapping_all_mapped(self):
-    """Issue is not automapped to Snapshot and Audit if already mapped."""
-    factories.RelationshipFactory(source=self.issue_snapshot,
-                                  destination=self.asmt)
-
-    self.assertEqual(all_models.Automapping.query.count(), 0)
