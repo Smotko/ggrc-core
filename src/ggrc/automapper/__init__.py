@@ -198,18 +198,20 @@ class AutomapperGenerator(object):
     role_map = {
         role.name: role.id for role in roles
     }
-    source = {
-        "id": rel.c.source_id,
-        "type": rel.c.source_type
+    source = lambda r: {
+        "id": r.c.source_id,
+        "type": r.c.source_type
     }
-    destination = {
-        "id": rel.c.destination_id,
-        "type": rel.c.destination_type
+    destination = lambda r: {
+        "id": r.c.destination_id,
+        "type": r.c.destination_type
     }
-
+    rel_l1 = rel.alias()
+    rel_l2 = rel.alias()
     for role in propagate_roles:
       prop_role_id = role_map[propagate_roles[role]]
-      for (first, second) in ((source, destination), (destination, source)):
+      for (first, second) in ((source(rel_l1), destination(rel_l1)),
+                              (destination(rel_l1), source(rel_l1))):
         sql = sa.sql.expression.select([
             acl.c.person_id,
             literal_column(str(prop_role_id)),
@@ -219,12 +221,12 @@ class AutomapperGenerator(object):
             acl.c.updated_at,
             acl.c.id
         ]).select_from(
-            rel.join(acl, sa.and_(
+            rel_l1.join(acl, sa.and_(
                 second["id"] == acl.c.object_id,
                 second["type"] == acl.c.object_type,
             )).join(acr, acl.c.ac_role_id == acr.c.id)
         ).where(sa.and_(
-            rel.c.automapping_id.in_(self.automapping_ids),
+            rel_l1.c.automapping_id.in_(self.automapping_ids),
             acr.c.name == role
         ))
         db.session.execute(acl.insert().from_select([
@@ -235,6 +237,39 @@ class AutomapperGenerator(object):
             acl.c.created_at,
             acl.c.updated_at,
             acl.c.parent_id], sql))
+
+        for (first_l2, second_l2) in ((source(rel_l2), destination(rel_l2)),
+                                      (destination(rel_l2), source(rel_l2))):
+          sql = sa.sql.expression.select([
+              acl.c.person_id,
+              literal_column(str(prop_role_id)),
+              first_l2["id"],
+              first_l2["type"],
+              acl.c.created_at,
+              acl.c.updated_at,
+              acl.c.id
+          ]).select_from(
+              rel_l1.join(rel_l2, sa.and_(
+                  second_l2["id"] == first["id"],
+                  second_l2["type"] == first["type"],
+                  first_l2["type"].in_(("Document", "Comment"))
+              ))
+              .join(acl, sa.and_(
+                  second_l2["id"] == acl.c.object_id,
+                  second_l2["type"] == acl.c.object_type,)
+              ).join(acr, acl.c.ac_role_id == acr.c.id)
+          ).where(sa.and_(
+              rel_l1.c.automapping_id.in_(self.automapping_ids),
+              acr.c.name == propagate_roles[role]
+          ))
+          db.session.execute(acl.insert().from_select([
+              acl.c.person_id,
+              acl.c.ac_role_id,
+              acl.c.object_id,
+              acl.c.object_type,
+              acl.c.created_at,
+              acl.c.updated_at,
+              acl.c.parent_id], sql))
 
   @staticmethod
   def _set_audit_id_for_issues(automapping_id):
