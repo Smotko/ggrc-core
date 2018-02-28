@@ -184,11 +184,6 @@ class Relatable(object):
       return {obj for obj in related if obj.type in _types}
     return set(related)
 
-  _api_attrs = reflection.ApiAttributes(
-      'related_sources',
-      'related_destinations'
-  )
-
   _include_links = []
 
   @classmethod
