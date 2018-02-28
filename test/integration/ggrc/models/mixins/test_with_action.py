@@ -15,6 +15,14 @@ from integration.ggrc.models import factories
 from integration.ggrc.query_helper import WithQueryApi
 
 
+def _get_relationship(type_, assessment_id):
+  """Helper function for gettint the relationship object"""
+  return all_models.Relationship.query.filter(
+      all_models.Relationship.source_type == type_,
+      all_models.Relationship.source_id == assessment_id,
+  ).order_by(all_models.Relationship.id.desc()).first()
+
+
 class TestDocumentWithActionMixin(TestCase, WithQueryApi):
   """Test case for WithAction mixin and Document actions."""
   # pylint: disable=invalid-name,too-many-public-methods
@@ -54,8 +62,8 @@ class TestDocumentWithActionMixin(TestCase, WithQueryApi):
     ]}})
     self.assert200(response)
 
-    rel_id = response.json["assessment"]["related_destinations"][0]["id"]
-    relationship = all_models.Relationship.query.get(rel_id)
+    relationship = _get_relationship(
+        "Assessment", response.json["assessment"]["id"])
     self.assertIsNotNone(relationship)
     document = all_models.Document.query.get(relationship.destination_id)
     self.assertEqual(document.link, "google.com")
@@ -74,8 +82,8 @@ class TestDocumentWithActionMixin(TestCase, WithQueryApi):
     ]}})
     self.assert200(response)
 
-    rel_id = response.json["assessment"]["related_destinations"][0]["id"]
-    relationship = all_models.Relationship.query.get(rel_id)
+    relationship = _get_relationship(
+        "Assessment", response.json["assessment"]["id"])
     self.assertEqual(relationship.destination_id, document.id)
     self.assertEqual(relationship.source_id, assessment.id)
 
@@ -91,8 +99,8 @@ class TestDocumentWithActionMixin(TestCase, WithQueryApi):
     ]}})
     self.assert200(response)
 
-    rel_id = response.json["issue"]["related_destinations"][0]["id"]
-    relationship = all_models.Relationship.query.get(rel_id)
+    relationship = _get_relationship(
+        "Issue", response.json["issue"]["id"])
     self.assertEqual(relationship.destination_id, document.id)
     self.assertEqual(relationship.source_id, issue.id)
 
@@ -353,8 +361,8 @@ class TestDocumentWithActionMixin(TestCase, WithQueryApi):
     ]}})
     self.assert200(response)
 
-    rel_id = response.json["assessment"]["related_destinations"][0]["id"]
-    relationship = all_models.Relationship.query.get(rel_id)
+    relationship = _get_relationship(
+        "Assessment", response.json["assessment"]["id"])
     self.assertIsNotNone(relationship)
     document = all_models.Document.query.get(relationship.destination_id)
     self.assertEqual(document.link, "google.com")
@@ -439,8 +447,8 @@ class TestDocumentWithActionMixin(TestCase, WithQueryApi):
     )
     self.assertEqual(len(assessments_by_url), 1)
 
-    rel_id = response.json["assessment"]["related_destinations"][0]["id"]
-    relationship = all_models.Relationship.query.get(rel_id)
+    relationship = _get_relationship(
+        "Assessment", response.json["assessment"]["id"])
 
     response = self.api.put(assessment, {"actions": {"remove_related": [
         {
@@ -499,9 +507,8 @@ class TestCommentWithActionMixin(TestCase):
     ]}})
     self.assert200(response)
     # last relationship id (newly created relationship)
-    rel_id = max(i["id"] for i in
-                 response.json["assessment"]["related_destinations"])
-    relationship = all_models.Relationship.query.get(rel_id)
+    relationship = _get_relationship(
+        "Assessment", response.json["assessment"]["id"])
     self.assertIsNotNone(relationship)
     comment = all_models.Comment.query.get(relationship.destination_id)
     self.assertEqual(comment.description, "comment")
@@ -526,8 +533,8 @@ class TestCommentWithActionMixin(TestCase):
         }
     ]}})
     self.assert200(response)
-    rel_id = response.json["assessment"]["related_destinations"][0]["id"]
-    relationship = all_models.Relationship.query.get(rel_id)
+    relationship = _get_relationship(
+        "Assessment", response.json["assessment"]["id"])
     self.assertIsNotNone(relationship)
     comment = all_models.Comment.query.get(relationship.destination_id)
     self.assertEqual(comment.description, "comment")
@@ -623,8 +630,8 @@ class TestSnapshotWithActionMixin(TestCase, WithQueryApi):
         }
     ]}})
     self.assert200(response)
-    rel_id = response.json["assessment"]["related_destinations"][0]["id"]
-    relationship = all_models.Relationship.query.get(rel_id)
+    relationship = _get_relationship(
+        "Assessment", response.json["assessment"]["id"])
     self.assertIsNotNone(relationship)
     self.assertEqual(relationship.destination_id, snapshot.id)
     self.assertEqual(relationship.destination_type, "Snapshot")
