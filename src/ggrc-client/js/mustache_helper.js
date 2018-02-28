@@ -18,6 +18,10 @@ import {
 import RefreshQueue from './models/refresh_queue';
 import Permission from './permission';
 import _ from 'lodash';
+import {
+  buildCountParams,
+  batchRequests
+} from './plugins/utils/query-api-utils';
 
 // Chrome likes to cache AJAX requests for Mustaches.
 let mustache_urls = {};
@@ -1721,35 +1725,30 @@ Mustache.registerHelper('current_cycle_assignee',
   });
 
 Mustache.registerHelper('with_mapping_count',
-  function (instance, mappingNames, options) {
+  function (instance, mappingName, options) {
     let args = can.makeArray(arguments);
-    let mappingName;
-    let i;
+    let relevant;
+    let dfds;
 
-    options = args[args.length - 1];  // FIXME duplicate declaration
-
-    mappingNames = args.slice(1, args.length - 1);
-
+    options = args[args.length - 1];
+    mappingName = Mustache.resolve(mappingName);
     instance = Mustache.resolve(instance);
 
-    // Find the most appropriate mapping
-    for (i = 0; i < mappingNames.length; i++) {
-      mappingName = Mustache.resolve(mappingNames[i]);
-      if (instance.has_binding(mappingName)) {
-        break;
-      }
-    }
-
+    relevant = {
+      id: instance.id,
+      type: instance.type,
+    };
+    dfds = buildCountParams([mappingName], relevant).map(batchRequests);
     return defer_render('span', {
       done: function (count) {
-        return options.fn(options.contexts.add({count: count}));
+        return options.fn(options.contexts.add({
+          count: count[mappingName].count}));
       },
       progress: function () {
         return options.inverse(options.contexts);
       },
     },
-    instance.get_list_counter(mappingName)
-    );
+    $.when(...dfds));
   });
 
 Mustache.registerHelper("log", function () {

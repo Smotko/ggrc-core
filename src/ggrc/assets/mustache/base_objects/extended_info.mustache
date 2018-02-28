@@ -29,21 +29,21 @@
       {{#visibility_delay 500}}
       <div class="info">
         <i class="fa fa-control color"></i>
-        {{#with_mapping_count instance 'controls' 'related_controls' 'controls'}}
+        {{#with_mapping_count instance 'Control'}}
           {{count}}
         {{else}}
           <span {{attach_spinner '{ "radius": 2.5, "length": 2.5, "width": 2 }' 'display:inline-block; top: -5px; left: 2px;' }}></span>
         {{/with_mapping_count}}
         &nbsp;&nbsp;
         <i class="fa fa-process color"></i>
-        {{#with_mapping_count instance 'related_processes' 'related_processes' 'processes'}}
+        {{#with_mapping_count instance 'Process'}}
           {{count}}
         {{else}}
           <span {{attach_spinner '{ "radius": 2.5, "length": 2.5, "width": 2 }' 'display:inline-block; top: -5px; left: 2px;' }}></span>
         {{/with_mapping_count}}
         &nbsp;&nbsp;
         <i class="fa fa-system color"></i>
-        {{#with_mapping_count instance 'related_systems' 'related_systems' 'systems'}}
+        {{#with_mapping_count instance 'System'}}
           {{count}}
         {{else}}
           <span {{attach_spinner '{ "radius": 2.5, "length": 2.5, "width": 2 }' 'display:inline-block; top: -5px; left: 2px;' }}></span>
