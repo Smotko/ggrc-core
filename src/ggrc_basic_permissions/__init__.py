@@ -329,36 +329,6 @@ def load_personal_context(user, permissions):
       .append(personal_context.id)
 
 
-def load_access_control_list(user, permissions):
-  """Load permissions from access_control_list"""
-  acl = all_models.AccessControlList
-  acr = all_models.AccessControlRole
-  access_control_list = db.session.query(
-      acl.object_type,
-      acl.object_id,
-      func.max(acr.read),
-      func.max(acr.update),
-      func.max(acr.delete)
-  ).filter(and_(
-      all_models.AccessControlList.person_id == user.id,
-      all_models.AccessControlList.ac_role_id == acr.id)
-  ).group_by(
-      all_models.AccessControlList.object_id,
-      all_models.AccessControlList.object_type
-  )
-
-  for object_type, object_id, read, update, delete in access_control_list:
-    actions = (("read", read), ("view_object_page", read),
-               ("update", update), ("delete", delete))
-    for action, allowed in actions:
-      if not allowed:
-        continue
-      permissions.setdefault(action, {})\
-          .setdefault(object_type, {})\
-          .setdefault('resources', set())\
-          .add(object_id)
-
-
 def load_backlog_workflows(permissions):
   """Load permissions for backlog workflows
 
@@ -446,9 +416,6 @@ def load_permissions_for(user):
 
   with benchmark("load_permissions > load personal context"):
     load_personal_context(user, permissions)
-
-  with benchmark("load_permissions > load access control list"):
-    load_access_control_list(user, permissions)
 
   with benchmark("load_permissions > load backlog workflows"):
     load_backlog_workflows(permissions)
