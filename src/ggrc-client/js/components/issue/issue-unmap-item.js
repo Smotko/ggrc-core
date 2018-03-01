@@ -10,7 +10,6 @@ import {
   buildParam,
   makeRequest,
 } from '../../plugins/utils/query-api-utils';
-import RefreshQueue from '../../models/refresh_queue';
 
 export default GGRC.Components('issueUnmapItem', {
   tag: 'issue-unmap-item',
@@ -20,33 +19,6 @@ export default GGRC.Components('issueUnmapItem', {
       paging: {
         value() {
           return new Pagination({pageSizeSelect: [5, 10, 15]});
-        },
-      },
-      relationship: {
-        async get() {
-          const sourceIds = _.union(
-            _.pluck(this.attr('issueInstance.related_sources'), 'id'),
-            _.pluck(this.attr('issueInstance.related_destinations'), 'id'));
-          const destinationIds = _.union(
-            _.pluck(this.attr('target.related_sources'), 'id'),
-            _.pluck(this.attr('target.related_destinations'), 'id'));
-
-          const [relId] = _.intersection(sourceIds, destinationIds);
-
-          if (!relId) {
-            return null;
-          }
-
-          const relationship = CMS.Models.Relationship.findInCacheById(relId);
-          if (relationship) {
-            return relationship;
-          }
-
-          const [loadedRelationship] = await new RefreshQueue()
-            .enqueue(CMS.Models.get_instance('Relationship', relId))
-            .trigger();
-
-          return loadedRelationship;
         },
       },
     },
@@ -140,10 +112,12 @@ export default GGRC.Components('issueUnmapItem', {
     },
     async unmap() {
       const currentObject = GGRC.page_instance();
-      const relationship = await this.attr('relationship');
       this.attr('isLoading', true);
       try {
-        await relationship.refresh();
+        const relationship = await CMS.Models.Relationship.findRelationship(
+          this.attr('issueInstance'),
+          this.attr('target')
+        );
         await relationship.unmap(true);
         if (currentObject === this.attr('issueInstance')) {
           GGRC.navigate(this.attr('issueInstance.viewLink'));
@@ -170,7 +144,10 @@ export default GGRC.Components('issueUnmapItem', {
   },
   events: {
     async click(el, ev) {
-      const relationship = await this.viewModel.attr('relationship');
+      const relationship = await CMS.Models.Relationship.findRelationship(
+        this.attr('issueInstance'),
+        this.attr('target')
+      );
       ev.preventDefault();
       if (!relationship) {
         // if there is no relationship it mean that user try to unmap

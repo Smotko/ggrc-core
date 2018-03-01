@@ -14,6 +14,7 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
     events = component.prototype.events;
   });
 
+<<<<<<< HEAD
   describe('relationship get() method', ()=> {
     beforeEach(()=> {
       viewModel.attr('issueInstance', {});
@@ -85,6 +86,8 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
       });
   });
 
+=======
+>>>>>>> Fix issue unmap button
   describe('paging value', ()=> {
     it('returns Pagination object with [5, 10, 15] pagination', ()=> {
       let pagination = viewModel.attr('paging');
@@ -175,7 +178,7 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
         Audit: {
           values: [{}],
           total: 1,
-      }}];
+        }}];
       reqDeferred = can.Deferred();
       spyOn(viewModel, 'buildQuery').and.returnValue(['query']);
       spyOn(QueryAPI, 'makeRequest').and.returnValue(reqDeferred);
@@ -187,7 +190,6 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
 
       viewModel.loadRelatedObjects();
       expect(viewModel.attr('isLoading')).toBeTruthy();
-
       reqDeferred.resolve(response);
       expect(viewModel.attr('isLoading')).toBeFalsy();
     });
@@ -300,39 +302,42 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
 
       it(`url consists of root_collection from appopriate model and id
         based on passed related object`, ()=> {
-        let rootCollectionType = CMS.Models[relatedObject.type].root_collection;
-        let expectedUrl;
+          let model = CMS.Models[relatedObject.type];
+          let rootCollectionType = model.root_collection;
+          let expectedUrl;
 
-        viewModel.openObject(relatedObject);
-        expectedUrl = buildUrl(rootCollectionType, relatedObject.id);
+          viewModel.openObject(relatedObject);
+          expectedUrl = buildUrl(rootCollectionType, relatedObject.id);
 
-        expect(getParam(window.open, ARGS.FIRST)).toBe(expectedUrl);
-      });
+          expect(getParam(window.open, ARGS.FIRST)).toBe(expectedUrl);
+        });
 
       it(`url consists of type and id from relatet object's child_type and
         child_id props if a type of related object equals to "Snapshot"`, ()=> {
-        let relatedObjectType = 'Snapshot';
-        let rootCollectionType = CMS.Models[relatedObject.type].root_collection;
-        let oldRelatedObjectType = relatedObject.type;
-        let expectedUrl;
+          let relatedObjectType = 'Snapshot';
+          let model = CMS.Models[relatedObject.type];
+          let rootCollectionType = model.root_collection;
+          let oldRelatedObjectType = relatedObject.type;
+          let expectedUrl;
 
-        _.extend(relatedObject, {
-          type: relatedObjectType,
-          child_type: oldRelatedObjectType,
-          child_id: 54321,
+          _.extend(relatedObject, {
+            type: relatedObjectType,
+            child_type: oldRelatedObjectType,
+            child_id: 54321,
+          });
+          viewModel.openObject(relatedObject);
+          expectedUrl = buildUrl(
+            rootCollectionType,
+            relatedObject.child_id
+          );
+
+          expect(getParam(window.open, ARGS.FIRST)).toBe(expectedUrl);
         });
-        viewModel.openObject(relatedObject);
-        expectedUrl = buildUrl(
-          rootCollectionType,
-          relatedObject.child_id
-        );
-
-        expect(getParam(window.open, ARGS.FIRST)).toBe(expectedUrl);
-      });
     });
   });
 
   describe('unmap() method', ()=> {
+<<<<<<< HEAD
     let relationship;
 
     beforeEach(function () {
@@ -362,6 +367,53 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
         expect(viewModel.attr('isLoading')).toBe(false);
         done();
       });
+=======
+    let refreshDfd;
+    let unmapDfd;
+    let pageInstance;
+    let relationship;
+
+    beforeEach(()=> {
+      pageInstance = new can.Map({viewLink: 'temp url'});
+      unmapDfd = can.Deferred();
+      refreshDfd = can.Deferred();
+      relationship = {
+        unmap: ()=> {
+          return unmapDfd;
+        },
+      };
+      spyOn($.prototype, 'trigger');
+      spyOn(viewModel, 'findRelationship').and.returnValue(refreshDfd);
+      spyOn(GGRC, 'page_instance')
+        .and.returnValue(pageInstance);
+      spyOn(GGRC, 'navigate');
+    });
+
+    it('should change "isLoading" flag in case of success', ()=> {
+      viewModel.attr('isLoading', false);
+
+      viewModel.unmap();
+      expect(viewModel.attr('isLoading')).toBeTruthy();
+      refreshDfd.resolve(relationship);
+      unmapDfd.resolve();
+      expect(viewModel.attr('isLoading')).toBeFalsy();
+    });
+
+    it('should change "isLoading" flag in case of error', ()=> {
+      viewModel.attr('isLoading', false);
+
+      viewModel.unmap();
+      expect(viewModel.attr('isLoading')).toBeTruthy();
+
+      refreshDfd.reject();
+      expect(viewModel.attr('isLoading')).toBeFalsy();
+    });
+
+    it('should unmap issue correctly', ()=> {
+      viewModel.unmap();
+      refreshDfd.resolve(relationship);
+      unmapDfd.resolve();
+>>>>>>> Fix issue unmap button
 
     it('should change "isLoading" flag in case of error',
       async function (done) {
@@ -383,12 +435,18 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
         done();
       });
 
+<<<<<<< HEAD
     it('should change open modal state to false if page instance is not issue',
       async function (done) {
         await viewModel.unmap();
         expect(viewModel.attr('modalState.open')).toBe(false);
         done();
       });
+=======
+      viewModel.unmap();
+      refreshDfd.resolve(relationship);
+      unmapDfd.resolve();
+>>>>>>> Fix issue unmap button
 
     it('should unmap issue correctly', async function (done) {
       await viewModel.unmap();
@@ -438,12 +496,21 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
   describe('"click" event', ()=> {
     let handler;
     let event;
+<<<<<<< HEAD
+=======
+    let refreshDfd;
+>>>>>>> Fix issue unmap button
     beforeEach(()=> {
       handler = events.click.bind({viewModel: viewModel});
+      refreshDfd = can.Deferred();
       event = jasmine.createSpyObj(['preventDefault']);
       spyOn(viewModel, 'processRelatedSnapshots');
       spyOn(viewModel, 'showNoRelationhipError');
       spyOn(viewModel, 'dispatch');
+<<<<<<< HEAD
+=======
+      spyOn(viewModel, 'findRelationship').and.returnValue(refreshDfd);
+>>>>>>> Fix issue unmap button
     });
 
     it('prevents default action of the event', async function (done) {
@@ -452,12 +519,20 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
       done();
     });
 
+<<<<<<< HEAD
     it('shows error if there is no relationship', async function (done) {
       await handler(null, event);
+=======
+    it('shows error if there is no relationship', ()=> {
+      handler(null, event);
+      refreshDfd.resolve(false);
+
+>>>>>>> Fix issue unmap button
       expect(viewModel.showNoRelationhipError).toHaveBeenCalled();
       done();
     });
 
+<<<<<<< HEAD
     describe('when there is relationship', () => {
       beforeEach(function () {
         const rel = new can.Map();
@@ -488,6 +563,27 @@ describe('GGRC.Components.IssueUnmapRelatedSnapshots', ()=> {
         expect(viewModel.dispatch).toHaveBeenCalledWith('unmapIssue');
         done();
       });
+=======
+    it(`calls processRelatedSnapshots() if target is assessment and
+      not allowed to unmap issue from audit`, ()=> {
+        viewModel.attr('target.type', 'Assessment');
+        viewModel.attr('issueInstance.allow_unmap_from_audit', false);
+
+        handler(null, event);
+        refreshDfd.resolve([{test: 1}]);
+        expect(viewModel.processRelatedSnapshots).toHaveBeenCalled();
+        expect(viewModel.dispatch).not.toHaveBeenCalled();
+      });
+
+    it('dispatches "unmapIssue" event if target', ()=> {
+      viewModel.attr('target.type', 'Control');
+      viewModel.attr('issueInstance.allow_unmap_from_audit', true);
+
+      handler(null, event);
+      refreshDfd.resolve([{test: 1}]);
+      expect(viewModel.processRelatedSnapshots).not.toHaveBeenCalled();
+      expect(viewModel.dispatch).toHaveBeenCalledWith('unmapIssue');
+>>>>>>> Fix issue unmap button
     });
   });
 

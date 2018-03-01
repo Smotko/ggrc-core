@@ -39,42 +39,14 @@ import {DESTINATION_UNMAPPED} from '../../events/eventTypes';
             this.attr('isUnmapping', false);
           });
       },
-      _findRelationship: function (source, destination) {
-        return CMS.Models.Relationship.findAll({
-          source_id: source.attr('id'),
-          source_type: source.attr('type'),
-          destination_id: destination.attr('id'),
-          destination_type: destination.attr('type')});
-      },
       getMapping: function () {
         let type = this.attr('mappingType') || defaultType;
         let destinations;
         let sources;
         let mapping;
         if (type === defaultType) {
-          // defaultType is a Relationship mapping and since we no longer have
-          // related_source/related_destinations on the FE we need to make
-          // 2 or 3 requests to find the correct relationship object to delete.
-          // 1. Try fetching a relationship where this.source is the source
-          //    and this.destination is the destination.
-          // 2. If 1. did not give a result, we try the opposite, where
-          //    this.source is the destination and this.destination is
-          //    the source.
-          // 3. We then have to do a refresh to get the ETAG before we can do
-          //    the DELETE.
-          // This code can be simplified once we add a /relationships/unmap API
-          return this._findRelationship(this.source, this.destination)
-            .then((res) => {
-              if (!res.length) {
-                return this._findRelationship(this.destination, this.source);
-              }
-              return res;
-            }).then((res) => {
-              if (!res.length) {
-                console.error('Could not find the corresponding relationship');
-              }
-              return res[0].refresh();
-            });
+          return CMS.Models.Relationship.findRelationship(
+            this.source, this.destination);
         } else {
           destinations = this.attr('destination')
             .attr(this.attr('objectProp')) || [];

@@ -156,6 +156,34 @@ import RefreshQueue from './refresh_queue';
       source: null,
       destination: null,
     },
+    findRelationship: async function (source, destination) {
+      // defaultType is a Relationship mapping and since we no longer have
+      // related_source/related_destinations on the FE we need to make
+      // 2 or 3 requests to find the correct relationship object to delete.
+      // 1. Try fetching a relationship where this.source is the source
+      //    and this.destination is the destination.
+      // 2. If 1. did not give a result, we try the opposite, where
+      //    this.source is the destination and this.destination is
+      //    the source.
+      // 3. We then have to do a refresh to get the ETAG before we can do
+      //    the DELETE.
+      // This code can be simplified once we add a /relationships/unmap API
+      let relationship = await this.findRelationship(source, destination);
+      if (!relationship) {
+        relationship = await this.findRelationship(destination, source);
+      }
+      if (!relationship) {
+        return false;
+      }
+      return relationship.refresh();
+    },
+    _findRelationship: async function (source, destination) {
+      return CMS.Models.Relationship.findAll({
+        source_id: source.attr('id'),
+        source_type: source.attr('type'),
+        destination_id: destination.attr('id'),
+        destination_type: destination.attr('type')});
+    },
     findAll: 'GET /api/relationships',
     create: 'POST /api/relationships',
     update: 'PUT /api/relationships/{id}',
