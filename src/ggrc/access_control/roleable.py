@@ -2,6 +2,7 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
 """Roleable model"""
+import sqlalchemy as sa
 from sqlalchemy import and_
 from sqlalchemy import orm
 from sqlalchemy.orm import remote
@@ -10,9 +11,13 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from ggrc import db
 from ggrc.access_control.list import AccessControlList
+from ggrc.access_control.role import AccessControlRole
 from ggrc.access_control import role
+from ggrc.builder import simple_property
 from ggrc.fulltext.attributes import CustomRoleAttr
+from ggrc.login import get_current_user_id
 from ggrc.models import reflection
+from ggrc.utils import benchmark
 from ggrc.utils.referenced_objects import get
 
 
@@ -26,7 +31,8 @@ class Roleable(object):
   _update_raw = _include_links = ['access_control_list', ]
   _fulltext_attrs = [CustomRoleAttr('access_control_list'), ]
   _api_attrs = reflection.ApiAttributes(
-      reflection.Attribute('access_control_list', True, True, True))
+      reflection.Attribute('access_control_list', True, True, True),
+      reflection.Attribute('permissions', False, False, True))
 
   @hybrid_property
   def full_access_control_list(self):
@@ -60,6 +66,39 @@ class Roleable(object):
         foreign_keys='AccessControlList.object_id',
         backref='{0}_object'.format(cls.__name__),
         cascade='all, delete-orphan')
+
+  @simple_property
+  def permissions(self):
+    """Access control list returned to the frontend"""
+
+    if hasattr(self, '_permissions'):
+      return self._permissions
+
+    acl_table = AccessControlList.__table__
+    acr_table = AccessControlRole.__table__
+
+    permission_columns = (
+        'read', 'update', 'delete'
+    )
+
+    with benchmark('Loading object ACL for {} {}'.format(self.type, self.id)):
+      result = db.session.execute(sa.select([
+          sa.func.max(acr_table.c[column]) for column in permission_columns
+      ]).select_from(
+          sa.join(
+              acr_table,
+              acl_table,
+              acr_table.c.id == acl_table.c.ac_role_id
+          )
+      ).where(
+          and_(
+              acl_table.c.object_id == self.id,
+              acl_table.c.object_type == self.type,
+              acl_table.c.person_id == get_current_user_id()
+          )
+      )).fetchone()
+      self._permissions = dict(zip(permission_columns, result))
+      return self._permissions
 
   @hybrid_property
   def access_control_list(self):
