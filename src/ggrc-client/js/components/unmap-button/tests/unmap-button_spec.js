@@ -45,9 +45,7 @@ describe('GGRC.Components.unmapButton', function () {
     let refreshDfd;
     beforeEach(function () {
       refreshDfd = can.Deferred();
-      spyOn(viewModel, 'getMapping').and.returnValue({
-        refresh: jasmine.createSpy().and.returnValue(refreshDfd),
-      });
+      spyOn(viewModel, 'getMapping').and.returnValue(refreshDfd);
     });
 
     it('sets "isUnmapping" flag to true', function () {
