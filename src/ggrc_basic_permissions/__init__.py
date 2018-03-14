@@ -8,6 +8,7 @@ import itertools
 
 import sqlalchemy.orm
 from sqlalchemy import and_
+from sqlalchemy import func
 from sqlalchemy import literal
 from sqlalchemy import or_
 from sqlalchemy.orm import aliased
@@ -311,9 +312,18 @@ def load_access_control_list(user, permissions):
   acl = all_models.AccessControlList
   acr = all_models.AccessControlRole
   access_control_list = db.session.query(
-      acl.object_type, acl.object_id, acr.read, acr.update, acr.delete
-  ).filter(and_(all_models.AccessControlList.person_id == user.id,
-                all_models.AccessControlList.ac_role_id == acr.id)).all()
+      acl.object_type,
+      acl.object_id,
+      func.max(acr.read),
+      func.max(acr.update),
+      func.max(acr.delete)
+  ).filter(and_(
+      all_models.AccessControlList.person_id == user.id,
+      all_models.AccessControlList.ac_role_id == acr.id)
+  ).group_by(
+      all_models.AccessControlList.object_id,
+      all_models.AccessControlList.object_type
+  ).all()
 
   for object_type, object_id, read, update, delete in access_control_list:
     actions = (("read", read), ("view_object_page", read),
