@@ -68,21 +68,13 @@ class MysqlIndexer(SqlIndexer):
       return sa.false()
 
     type_queries = []
-    for model_name in model_names:
-      contexts, resources = permissions.get_context_resource(
-          model_name=model_name,
-          permission_type=permission_type,
-          permission_model=permission_model
-      )
-      statement = sa.and_(
-          MysqlRecordProperty.type == model_name,
-          context_query_filter(MysqlRecordProperty.context_id, contexts)
-      )
-      if resources:
-        statement = sa.or_(sa.and_(MysqlRecordProperty.type == model_name,
-                                   MysqlRecordProperty.key.in_(resources)),
-                           statement)
-      type_queries.append(statement)
+    # TODO: Instead of resources join the acl table
+    # for model_name in model_names:
+    #   if resources:
+    #     statement = or_(and_(MysqlRecordProperty.type == model_name,
+    #                          MysqlRecordProperty.key.in_(resources)),
+    #                     statement)
+    #   type_queries.append(statement)
 
     return sa.and_(
         MysqlRecordProperty.type.in_(model_names),

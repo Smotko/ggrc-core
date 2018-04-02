@@ -128,26 +128,6 @@ def delete_contexts_for(resource_type):
   return permissions_for(get_user()).delete_contexts_for(resource_type)
 
 
-def create_resources_for(resource_type):
-  """All resources in which the user has create permission."""
-  return permissions_for(get_user()).create_resources_for(resource_type)
-
-
-def read_resources_for(resource_type):
-  """All resources in which the user has read permission."""
-  return permissions_for(get_user()).read_resources_for(resource_type)
-
-
-def update_resources_for(resource_type):
-  """All resources in which the user has update permission."""
-  return permissions_for(get_user()).update_resources_for(resource_type)
-
-
-def delete_resources_for(resource_type):
-  """All resources in which the user has delete permission."""
-  return permissions_for(get_user()).delete_resources_for(resource_type)
-
-
 def is_allowed_view_object_page_for(instance):
   """Whether or not the user is allwoed to access the object page view for the
   given instance.
@@ -177,18 +157,16 @@ def get_context_resource(model_name, permission_type='read',
                          permission_model=None):
   """Get allowed contexts and resources."""
   permissions_map = {
-      "create": (create_contexts_for, create_resources_for),
-      "read": (read_contexts_for, read_resources_for),
-      "update": (update_contexts_for, update_resources_for),
-      "delete": (delete_contexts_for, delete_resources_for),
+      "create": create_contexts_for,
+      "read": read_contexts_for,
+      "update": update_contexts_for,
+      "delete": delete_contexts_for,
   }
 
-  contexts = permissions_map[permission_type][0](
-      permission_model or model_name)
-  resources = permissions_map[permission_type][1](
+  contexts = permissions_map[permission_type](
       permission_model or model_name)
 
   if permission_model and contexts:
     contexts = set(contexts) & set(read_contexts_for(model_name))
 
-  return contexts, resources
+  return contexts

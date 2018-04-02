@@ -222,12 +222,13 @@ class QueryHelper(object):
     if permission_type == "update" and permissions.has_system_wide_update():
       return None
 
-    contexts, resources = permissions.get_context_resource(
-        model_name=model.__name__, permission_type=permission_type
-    )
-    if contexts is not None:
-      return sa.or_(context_query_filter(model.context_id, contexts),
-                    model.id.in_(resources) if resources else sa.sql.false())
+    # TODO: Instead of model.id.in_(resources) join the acl table here
+    # contexts, resources = permissions.get_context_resource(
+    #     model_name=model.__name__, permission_type=permission_type
+    # )
+    # if contexts is not None:
+    #   return sa.or_(context_query_filter(model.context_id, contexts),
+    #                 model.id.in_(resources) if resources else sa.sql.false())
     return sa.sql.true()
 
   def _get_objects(self, object_query):

@@ -225,11 +225,7 @@ class DefaultUserPermissions(UserPermissions):
             .get('contexts', []):
       return True
     return \
-        permission.resource_id in permissions\
-        .get(permission.action, {})\
-        .get(permission.resource_type, {})\
-        .get('resources', [])\
-        or permission.context_id in \
+        permission.context_id in \
         permissions\
         .get(permission.action, {})\
         .get(permission.resource_type, {})\
@@ -289,10 +285,6 @@ class DefaultUserPermissions(UserPermissions):
     if (not permissions.get(action) or
        not permissions[action].get(instance._inflector.model_singular)):
       return False
-    resources = self._permissions()\
-        .setdefault(action, {})\
-        .setdefault(instance._inflector.model_singular, {})\
-        .setdefault('resources', [])
     contexts = self._permissions()\
         .setdefault(action, {})\
         .setdefault(instance._inflector.model_singular, {})\
@@ -303,8 +295,6 @@ class DefaultUserPermissions(UserPermissions):
     context_id = None
     if hasattr(instance, 'context') and hasattr(instance.context, 'id'):
       context_id = instance.context.id
-    if instance.id in resources:
-      return True
     no_context_conditions = self._permissions()\
         .setdefault(action, {})\
         .setdefault(instance._inflector.model_singular, {})\
@@ -362,27 +352,6 @@ class DefaultUserPermissions(UserPermissions):
     """Whether or not the user is allowed to delete the given instance"""
     return self._is_allowed_for(instance, 'delete')
 
-  def _get_resources_for(self, action, resource_type):
-    """Get resources resources (object ids) for a given action and
-    resource_type"""
-    permissions = self._permissions()
-
-    if self._permission_match(self.ADMIN_PERMISSION, permissions):
-      return None
-
-    # Get the list of resources for a given resource type and any
-    #   superclasses
-    resource_types = get_contributing_resource_types(resource_type)
-
-    ret = []
-    for resource_type in resource_types:
-      ret.extend(
-          permissions
-          .get(action, {})
-          .get(resource_type, {})
-          .get('resources', set()))
-    return ret
-
   def _get_contexts_for(self, action, resource_type):
     # FIXME: (Security) When applicable, we should explicitly assert that no
     #   permissions are expected (e.g. that every user has ADMIN_PERMISSION).
@@ -426,22 +395,6 @@ class DefaultUserPermissions(UserPermissions):
   def delete_contexts_for(self, resource_type):
     """All contexts in which the user has delete permission."""
     return self._get_contexts_for('delete', resource_type)
-
-  def create_resources_for(self, resource_type):
-    """All resources in which the user has create permission."""
-    return self._get_resources_for('create', resource_type)
-
-  def read_resources_for(self, resource_type):
-    """All resources in which the user has read permission."""
-    return self._get_resources_for('read', resource_type)
-
-  def update_resources_for(self, resource_type):
-    """All resources in which the user has update permission."""
-    return self._get_resources_for('update', resource_type)
-
-  def delete_resources_for(self, resource_type):
-    """All resources in which the user has delete permission."""
-    return self._get_resources_for('delete', resource_type)
 
   def is_allowed_view_object_page_for(self, instance):
     """All resources in which the user can access object page."""
