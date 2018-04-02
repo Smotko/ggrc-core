@@ -280,6 +280,12 @@ class DefaultUserPermissions(UserPermissions):
       if not conditions:
         return True
       return self._check_conditions(instance, action, conditions)
+    if (
+        hasattr(instance, 'permissions') and
+        action in instance.permissions and
+        instance.permissions[action]
+    ):
+      return True
     if (not permissions.get(action) or
        not permissions[action].get(instance._inflector.model_singular)):
       return False
