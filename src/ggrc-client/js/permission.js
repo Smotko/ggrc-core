@@ -157,7 +157,7 @@ const Permission = can.Construct({
     if (checkAdmin(0) || checkAdmin(null)) {
       return true;
     }
-    if (~resources.indexOf(instance.id)) {
+    if (instance.permissions && instance.permissions[action]) {
       return true;
     }
     if (conditions.length === 0 && (this._is_allowed(permissions,
